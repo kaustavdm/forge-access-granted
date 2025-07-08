@@ -1,0 +1,15 @@
+{
+  "name": "forge-access-granted",
+  "version": "1.0.0",
+  "main": "server.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "@fastify/static": "^6.12.0",
+    "dotenv": "^16.4.5",
+    "fastify": "^4.27.2",
+    "twilio": "^4.19.0"
+  }
+}
