@@ -2,26 +2,9 @@
 
 > **Project:** Multi-Step Onboarding with Email & Phone Verification  
 > **Focus:** Seamless User Verification Using Twilio Verify & Lookup  
-> **Tech Stack:** Node.js (Fastify), Twilio Verify, Twilio Lookup, Vanilla JS  
+> **Tech Stack:** Node.js (Fastify), Twilio Verify, Twilio Lookup 
 > **Duration:** ~60 min to build  
 > **Outcome:** Complete onboarding flow with email/phone verification
-
----
-
-## Table of Contents
-
-1. [Overview](#overview)
-2. [Prerequisites](#prerequisites)
-3. [Architecture](#architecture)
-4. [Setup](#setup)
-5. [Step 1: Project Structure](#step-1-project-structure)
-6. [Step 2: Backend API Implementation](#step-2-backend-api-implementation)
-7. [Step 3: Frontend Implementation](#step-3-frontend-implementation)
-8. [Step 4: End-to-End Flow](#step-4-end-to-end-flow)
-9. [Step 5: Testing & Validation](#step-5-testing--validation)
-10. [Troubleshooting](#troubleshooting)
-11. [Best Practices & Next Steps](#best-practices--next-steps)
-12. [Appendix: Key Resources](#appendix-key-resources)
 
 ---
 
@@ -45,7 +28,7 @@ This runbook guides you through building a complete multi-step user onboarding f
 
 ## Prerequisites
 
-- **Node.js** (v18+ recommended)
+- **Node.js** (latest LTS version recommended)
 - **Twilio Account** with Verify & Lookup services enabled
 - **Twilio Credentials:** `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, `TWILIO_VERIFY_SERVICE_SID`
   - **`TWILIO_ACCOUNT_SID`**: Your unique Twilio Account identifier
@@ -75,41 +58,6 @@ TWILIO_VERIFY_SERVICE_SID=VAXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 PORT=3000
 ```
 
-**Note:** Never commit `.env` to version control. Use `.env.example` as a sample and copy it over to `.env`.
-
----
-
-## Architecture
-
-```mermaid
-flowchart TD
-    A[User enters email] --> B[POST /api/verify/email]
-    B --> C[Twilio sends email OTP]
-    C --> D[User enters email OTP]
-    D --> E[POST /api/verify/email/validate]
-    E --> F{Valid code?}
-    F -- Yes --> G[Show phone form]
-    F -- No --> D
-    
-    G --> H[User enters phone]
-    H --> I[POST /api/lookup]
-    I --> J{Valid phone?}
-    J -- No --> H
-    J -- Yes --> K[POST /api/verify/phone]
-    K --> L[Twilio sends SMS OTP]
-    L --> M[User enters phone OTP]
-    M --> N[POST /api/verify/phone/validate]
-    N --> O{Valid code?}
-    O -- Yes --> P[Success Dashboard]
-    O -- No --> M
-```
-
-**Technology Stack:**
-- **Backend:** Fastify (lightweight, fast Node.js framework)
-- **Verification:** Twilio Verify API (email + SMS OTP)
-- **Validation:** Twilio Lookup API (phone number validation)
-- **Frontend:** Vanilla HTML/CSS/JS (modular, no frameworks)
-
 ---
 
 ## Setup
@@ -128,42 +76,21 @@ npm init -y
 npm install fastify @fastify/static twilio dotenv
 ```
 
-### 2. Directory Structure
+### Create .env and optional files
 
-```
-forge-access-granted/
-├── .env                    # Environment variables (not in git)
-├── .env.example           # Environment template
-├── .gitignore             # Git ignore file
-├── package.json           # Project dependencies
-├── server.js              # Main server file
-├── runbook.md             # This file
-└── public/                # Static frontend files
-    ├── index.html         # Main HTML page
-    ├── style.css          # Styling
-    └── main.js            # Frontend JavaScript
+**.env**
+
+```env
+TWILIO_ACCOUNT_SID=your_account_sid
+TWILIO_AUTH_TOKEN=your_auth_token
+TWILIO_VERIFY_SERVICE_SID=your_verify_service_sid
+PORT=3000
 ```
 
----
+**Note:** Never commit `.env` to version control. Use `.env.example` as a sample and copy it over to `.env`.
 
-## Step 1: Project Structure
-
-### Create Core Files
-
-**package.json dependencies:**
-
-```json
-{
-  "dependencies": {
-    "@fastify/static": "^6.12.0",
-    "dotenv": "^16.4.5",
-    "fastify": "^4.27.2",
-    "twilio": "^4.19.0"
-  }
-}
-```
-
-**.gitignore:**
+<details>
+<summary>`.gitignore` (optional)</summary>
 
 ```gitignore
 node_modules/
@@ -178,14 +105,7 @@ yarn-error.log*
 .pnpm-debug.log*
 ```
 
-**.env.example:**
-
-```env
-TWILIO_ACCOUNT_SID=your_account_sid
-TWILIO_AUTH_TOKEN=your_auth_token
-TWILIO_VERIFY_SERVICE_SID=your_verify_service_sid
-PORT=3000
-```
+</details>
 
 ---
 
@@ -506,7 +426,6 @@ document.addEventListener('DOMContentLoaded', OnboardingFlow.init);
 3. **Success:**
    - Both email and phone verified
    - Success dashboard displayed
-   - User onboarding complete
 
 ### Error Handling
 
@@ -517,33 +436,6 @@ document.addEventListener('DOMContentLoaded', OnboardingFlow.init);
 - **Twilio API errors:** Backend error handling with informative responses
 
 ---
-
-## Step 5: Testing & Validation
-
-### Manual Testing Checklist
-
-**Email Verification:**
-- [ ] Valid email formats accepted
-- [ ] Invalid email formats rejected
-- [ ] Email OTP received in inbox/spam
-- [ ] Correct OTP code validates successfully
-- [ ] Incorrect OTP code shows error
-- [ ] Network errors handled gracefully
-
-**Phone Verification:**
-- [ ] Valid phone formats (+1234567890) accepted
-- [ ] Invalid phone formats rejected
-- [ ] Invalid phone numbers rejected by Lookup
-- [ ] SMS OTP received on mobile device
-- [ ] Correct OTP code validates successfully
-- [ ] Incorrect OTP code shows error
-
-**UI/UX:**
-- [ ] Step transitions work smoothly
-- [ ] Loading states (disabled buttons) work
-- [ ] Error messages display clearly
-- [ ] Success state displays correctly
-- [ ] Responsive design on mobile/desktop
 
 ### Quick Test Commands
 
@@ -563,158 +455,4 @@ curl -X POST http://localhost:3000/api/lookup \
 
 ---
 
-## Troubleshooting
-
-### Common Issues & Solutions
-
-**1. "TypeError: Converting circular structure to JSON"**
-- **Cause:** Spreading entire Twilio response object (`...result`)
-- **Fix:** Extract only needed properties from Twilio responses
-- **Example:** Use `{ phoneNumber: result.phoneNumber }` instead of `...result`
-
-**2. "Username is required" Twilio Error**
-- **Cause:** Missing or incorrect Twilio credentials
-- **Fix:** Verify `.env` file exists with correct `TWILIO_ACCOUNT_SID` and `TWILIO_AUTH_TOKEN`
-- **Check:** Environment variables loaded with `console.log(process.env.TWILIO_ACCOUNT_SID)`
-
-**3. Email OTP Not Received**
-- **Cause:** Email delivery issues or spam filtering
-- **Fix:** Check spam folder, verify email address, use test email services
-- **Debug:** Check Twilio Console logs for delivery status
-
-**4. SMS OTP Not Received**
-- **Cause:** Invalid phone number, regional restrictions, or carrier issues
-- **Fix:** Use valid mobile numbers, check Twilio Console for delivery logs
-- **Test:** Try with verified phone numbers first
-
-**5. Frontend Steps Not Transitioning**
-- **Cause:** JavaScript errors or DOM element issues
-- **Fix:** Check browser console for errors, verify element IDs match selectors
-- **Debug:** Add console.log statements in step transition functions
-
-### Debug Mode
-
-Add debug logging to server.js:
-
-```javascript
-// Add after Twilio client setup
-if (process.env.NODE_ENV === 'development') {
-  app.addHook('preHandler', async (request, reply) => {
-    console.log(`${request.method} ${request.url}`);
-    console.log('Body:', request.body);
-  });
-}
-```
-
----
-
-## Best Practices & Next Steps
-
-### Security Considerations
-
-- **Rate Limiting:** Implement rate limiting for OTP endpoints
-- **Input Validation:** Validate all inputs on both client and server
-- **CSRF Protection:** Add CSRF tokens for production use
-- **Environment Variables:** Never commit secrets to version control
-- **HTTPS:** Use HTTPS in production for secure data transmission
-
-### Performance Optimizations
-
-- **Caching:** Cache Twilio client instances
-- **Connection Pooling:** Use connection pooling for database operations
-- **Minification:** Minify CSS/JS for production
-- **CDN:** Serve static assets via CDN
-
-### Production Readiness
-
-```javascript
-// Add to server.js for production
-if (process.env.NODE_ENV === 'production') {
-  // Trust proxy headers
-  app.register(require('@fastify/helmet'));
-  app.register(require('@fastify/rate-limit'), {
-    max: 5,
-    timeWindow: '1 minute'
-  });
-}
-```
-
-### Monitoring & Analytics
-
-- **Logging:** Implement structured logging with Winston or Pino
-- **Metrics:** Track conversion rates for each onboarding step
-- **Error Tracking:** Use Sentry or similar for error monitoring
-- **Twilio Analytics:** Monitor delivery rates in Twilio Console
-
-### Feature Extensions
-
-- **Social Login:** Add Google/Apple sign-in options
-- **Multi-Language:** Internationalization support
-- **Custom Branding:** Configurable themes and styling
-- **Admin Dashboard:** View onboarding metrics and user management
-- **WhatsApp Support:** Add WhatsApp as verification channel
-
----
-
-## Appendix: Key Resources
-
-### Twilio Documentation
-- [Twilio Verify API Documentation](https://www.twilio.com/docs/verify/api)
-- [Twilio Lookup API Documentation](https://www.twilio.com/docs/lookup/api)
-- [Verify Quickstart (Node.js)](https://www.twilio.com/docs/verify/quickstarts/node-js)
-- [Lookup Quickstart (Node.js)](https://www.twilio.com/docs/lookup/quickstarts/node-js)
-
-### Fastify Documentation
-- [Fastify Official Documentation](https://www.fastify.io/docs/latest/)
-- [Fastify Static Plugin](https://github.com/fastify/fastify-static)
-- [Fastify Best Practices](https://www.fastify.io/docs/latest/Guides/Getting-Started/)
-
-### Development Tools
-- [Twilio CLI](https://www.twilio.com/docs/twilio-cli/quickstart)
-- [ngrok](https://ngrok.com/) (for local development with webhooks)
-- [Postman Collection](https://www.postman.com/) (for API testing)
-
-### Code Examples
-- [Twilio Verify Code Samples](https://github.com/TwilioDevEd/verify-v2-quickstart-node)
-- [Fastify Examples](https://github.com/fastify/fastify/tree/main/examples)
-
----
-
-## FAQ
-
-**Q: Can this be integrated with existing authentication systems?**
-A: Yes, this verification flow can be plugged into Auth0, Firebase Auth, or custom authentication systems as a verification step.
-
-**Q: What if Twilio Lookup is not available in my region?**
-A: Implement fallback validation using regex patterns and consider using alternative phone validation services.
-
-**Q: How do I test WhatsApp verification?**
-A: WhatsApp requires sandbox setup and opt-in process. See [Twilio WhatsApp Sandbox](https://www.twilio.com/docs/whatsapp/sandbox) for testing.
-
-**Q: Can I customize the email templates?**
-A: Yes, you can create custom email templates in your Twilio Console under Verify > Email Templates.
-
-**Q: How do I handle international phone numbers?**
-A: Always use E.164 format (+1234567890) and validate using Twilio Lookup for international compatibility.
-
-**Q: What's the cost for verification?**
-A: Check [Twilio Pricing](https://www.twilio.com/pricing/verify) for current rates. Costs vary by channel (SMS, email, voice).
-
----
-
-## Done? Celebrate! 🎉
-
-You've built a production-ready, multi-step onboarding flow with:
-✅ Email verification with OTP  
-✅ Phone verification with SMS OTP  
-✅ Phone number validation via Lookup  
-✅ Responsive, user-friendly interface  
-✅ Robust error handling  
-✅ Modular, maintainable code  
-
-Ready for production? Add monitoring, implement rate limiting, and integrate with your authentication system.
-
----
-
-> **Need help?**  
-> Check the [Twilio Documentation](https://www.twilio.com/docs) or reach out to the Twilio community.
+Done? Celebrate! 🎉

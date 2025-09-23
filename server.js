@@ -23,7 +23,7 @@ app.post('/api/lookup', async (req, reply) => {
   try {
     const result = await client.lookups.v2.phoneNumbers(phone).fetch();
     // Extract only the essential information to avoid circular reference issues
-    reply.send({ 
+    reply.send({
       valid: true, 
       phoneNumber: result.phoneNumber,
       nationalFormat: result.nationalFormat,
@@ -104,5 +104,5 @@ app.setNotFoundHandler((req, reply) => {
 const PORT = process.env.PORT || 3000;
 app.listen({ port: PORT, host: '0.0.0.0' }, err => {
   if (err) throw err;
-  console.log(`Server running on http://localhost:${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });

@@ -81,7 +81,7 @@ const OnboardingFlow = (() => {
 
   /* ===== API COMMUNICATION LAYER ===== */
 
-  // Handles all communication with the backend Twilio APIs
+  // Handles all communication with the application backend
   const api = {
     // Generic POST request wrapper for all API calls
     async post(endpoint, data) {
