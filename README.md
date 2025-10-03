@@ -22,8 +22,8 @@ The [RUNBOOK.md](./RUNBOOK.md) provides a step-by-step guide to:
 
 ### Postman resources
 
-- [Postman Collection](./Twilio%20Forge-%20Access%20Granted.postman_collection.json)
-- [Postman Environment](./Forge-%20Access%20Granted.postman_environment.json)
+- [Postman Collection](./postman/Twilio%20Forge-%20Access%20Granted.postman_collection.json)
+- [Postman Environment](./postman/Forge-%20Access%20Granted.postman_environment.json)
 
 Import these files into Postman to easily follow and test the API requests described in the Runbook.
 
@@ -31,9 +31,12 @@ Import these files into Postman to easily follow and test the API requests descr
 
 This repository is structured for hands-on learning:
 
-- **`./build/` directory**: Contains scaffolded files (`lookup.js`, `verify.js`) where you'll implement the Twilio API calls
-- **`./build/public/` directory**: Pre-built UI for testing your implementation
-- **`./final/` directory**: Contains the complete, working implementation for reference
+- **[`./build/`](./build/) directory**: Contains scaffolded files (`lookup.js`, `verify.js`) where you'll implement the Twilio API calls
+- **[`./build/public/`](./build/public/) directory**: Pre-built UI for testing your implementation
+- **[`./final/`](./final/) directory**: Contains the complete, working implementation for reference
+
+> [!TIP]
+> This project uses npm workspaces for easier dependency management. Running `npm install` in the root directory will automatically install dependencies for both the `build/` and `final/` directories. Common dependencies are installed only once in the root `node_modules`, reducing duplication and ensuring consistent versions across the project.
 
 ### Key files
 

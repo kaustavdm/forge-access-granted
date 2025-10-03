@@ -44,8 +44,8 @@ The npm scripts make it easy to run either version:
 #### 1.2 Setup Postman
 
 1. Download and install [Postman](https://www.postman.com/downloads/) if you haven't already
-2. Import the [Postman collection](./Twilio%20Forge-%20Access%20Granted.postman_collection.json) included in this repository
-3. Import the [Postman environment](./Forge-%20Access%20Granted.postman_environment.json) or Create a new Environment in Postman with the following variables:
+2. Import the [Postman collection](./postman/Twilio%20Forge-%20Access%20Granted.postman_collection.json) included in this repository
+3. Import the [Postman environment](./postman/Forge-%20Access%20Granted.postman_environment.json) or Create a new Environment in Postman with the following variables:
    - `TWILIO_API_KEY_SID`: Your Twilio API Key SID
    - `TWILIO_API_KEY_SECRET`: Your Twilio API Key Secret
    - `PHONE_NUMBER`: A phone number to test with (in E.164 format, e.g., +1234567890)
