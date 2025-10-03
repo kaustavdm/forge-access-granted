@@ -1,10 +1,10 @@
 # Forge Access Granted – Onboarding Flow Runbook
 
-> **Project:** Onboarding with Phone Verification
-> **Focus:** Seamless User Verification Using Twilio Verify & Lookup
-> **Tech Stack:** Node.js (Express), Twilio Verify, Twilio Lookup
-> **Duration:** ~60 min to build
-> **Outcome:** Complete onboarding flow with phone verification
+- **Project:** Onboarding with Phone Verification
+- **Focus:** Seamless User Verification Using Twilio Verify & Lookup
+- **Tech Stack:** Node.js (Express), Twilio Verify, Twilio Lookup
+- **Duration:** ~60 min to build
+- **Outcome:** Complete onboarding flow with phone verification
 
 ---
 
