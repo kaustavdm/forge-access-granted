@@ -3,8 +3,15 @@
   "version": "1.0.0",
   "main": "server.js",
   "type": "commonjs",
+  "private": true,
+  "workspaces": [
+    "build",
+    "final"
+  ],
   "scripts": {
-    "start": "node server.js"
+    "start": "node build/server.js",
+    "start:build": "node build/server.js",
+    "start:final": "node final/server.js"
   },
   "dependencies": {
     "dotenv": "^16.6.1",

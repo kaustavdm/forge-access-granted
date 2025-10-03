@@ -15,6 +15,18 @@
 - **Twilio Account**, upgraded and active
 - **Basic knowledge:** JavaScript/Node.js, HTML/CSS, HTTP APIs
 
+## Project Structure
+
+This workshop is organized with npm workspaces to simplify dependency management:
+
+- **Root directory**: Contains configuration files and documentation
+- **`./build/` directory**: Workshop files where you'll implement the Twilio API calls
+- **`./final/` directory**: Complete implementation for reference
+
+The npm scripts make it easy to run either version:
+- `npm start` (or `npm run start:build`): Run the workshop version you're building
+- `npm run start:final`: Run the completed reference implementation
+
 ---
 
 ## Build
@@ -56,7 +68,7 @@ cp .env.example .env
 # Edit .env with your credentials
 
 # Start the server
-node server.js
+npm start
 ```
 
 ---
@@ -121,20 +133,20 @@ You can request multiple data packages in a single lookup:
 
 ### 3. Implement lookup in code
 
-In your code editor, open [`server.js`](./server.js), [`verify.js`](./verify.js) and [`lookup.js`](./lookup.js). The `./public/` directory contains a basic HTML application that we will use as the UI. We only need to add functionality in the lookup and verify routes.
+In your code editor, open [`server.js`](./build/server.js), [`verify.js`](./build/verify.js) and [`lookup.js`](./build/lookup.js). The `./build/public/` directory contains a basic HTML application that we will use as the UI. We only need to add functionality in the lookup and verify routes.
 
-- `server.js` bootstraps a basic ExpressJS application. It contains a functional application, so you don't need to edit this file, but take a quick look to familiarise yourself. The key points are:
+- `build/server.js` bootstraps a basic ExpressJS application. It contains a functional application, so you don't need to edit this file, but take a quick look to familiarise yourself. The key points are:
   - Load .env file and populate environment variables
   - Setup basic logging, middlewares, request logging and interrupt handling
-  - Mount the `./public/` directory as static file server on `/`
-  - Mount routes from `lookup.js` at `/api/lookup`
-  - Mount routes from `verify.js` at `/api/verify`
-- `lookup.js` contains the route scaffolding for interacting with the Twilio Lookup API. You will implement the Twilio API calls in this file.
-- `verify.js` contains the route scaffolding for interacting with the Twilio Verify API. You will implement the Twilio API calls in this file.
+  - Mount the `./build/public/` directory as static file server on `/`
+  - Mount routes from `build/lookup.js` at `/api/lookup`
+  - Mount routes from `build/verify.js` at `/api/verify`
+- `build/lookup.js` contains the route scaffolding for interacting with the Twilio Lookup API. You will implement the Twilio API calls in this file.
+- `build/verify.js` contains the route scaffolding for interacting with the Twilio Verify API. You will implement the Twilio API calls in this file.
 
 #### 3.1 Implement basic lookup
 
-Open `lookup.js` and locate the endpoint `GET /:phone`. This endpoint should handle basic phone number lookups.
+Open `build/lookup.js` and locate the endpoint `GET /:phone`. This endpoint should handle basic phone number lookups.
 
 **Your task:** Implement the Twilio Lookup API call in this endpoint.
 
@@ -147,14 +159,14 @@ Key implementation points:
 
 To test the implementation:
 
-1. Start your server: `npm start`
+1. Start your server: `npm start` (or `npm run start:build`)
 2. In Postman, select the "Application endpoints" folder
 3. Send the "2.1 Basic lookup" request
 4. You should receive a response with phone number details
 
 #### 3.2 Implement lookup with line type intelligence
 
-Locate the endpoint `GET /:phone/line-type` in `lookup.js`.
+Locate the endpoint `GET /:phone/line-type` in `build/lookup.js`.
 
 **Your task:** Implement lookup with line type intelligence.
 
@@ -172,7 +184,7 @@ Test this implementation:
 
 #### 3.3 Implement lookup with SMS pumping check
 
-Locate the endpoint `GET /:phone/sms-pumping` in `lookup.js`.
+Locate the endpoint `GET /:phone/sms-pumping` in `build/lookup.js`.
 
 **Your task:** Implement lookup with SMS pumping risk assessment.
 
@@ -188,7 +200,7 @@ Test this implementation:
 
 #### 3.4 Implement lookup with multiple checks
 
-Locate the endpoint `GET /:phone/multiple` in `lookup.js`.
+Locate the endpoint `GET /:phone/multiple` in `build/lookup.js`.
 
 **Your task:** Implement lookup with multiple data packages.
 
@@ -238,7 +250,7 @@ Let's review what you've implemented so far:
 
 #### 4.1. Implement verify init for phone over SMS
 
-Open `verify.js` and locate the endpoint `POST /phone`. This endpoint should send verification codes via SMS or voice call.
+Open `build/verify.js` and locate the endpoint `POST /phone`. This endpoint should send verification codes via SMS or voice call.
 
 **Your task:** Implement the Twilio Verify API call to initiate verification.
 
@@ -286,7 +298,7 @@ Test this implementation:
 
 #### 4.4. Implement code validation
 
-Locate the endpoint `POST /phone/validate` in `verify.js`.
+Locate the endpoint `POST /phone/validate` in `build/verify.js`.
 
 **Your task:** Implement the Twilio Verify API call to validate the verification code.
 
@@ -324,7 +336,7 @@ Congratulations! You've implemented:
 - Code validation and error handling
 - A user-friendly UI for the entire process
 
-> **Hint:** If you encountered any issues, check the `./final/` directory for the complete implementation.
+> **Hint:** If you encountered any issues, check the `./final/` directory for the complete implementation. You can run the final version with `npm run start:final`.
 
 ---
 

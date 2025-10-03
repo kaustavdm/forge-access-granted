@@ -16,7 +16,7 @@ The [RUNBOOK.md](./RUNBOOK.md) provides a step-by-step guide to:
 **Read the [RUNBOOK.md](./RUNBOOK.md) for detailed instructions and workshop steps.**
 
 > [!TIP]
-> The workshop uses a scaffolded Express.js application. You'll implement the Twilio API calls in `lookup.js` and `verify.js`. If you get stuck, check the [`./final/`](./final/) directory for the complete implementation.
+> The workshop uses a scaffolded Express.js application. You'll implement the Twilio API calls in `build/lookup.js` and `build/verify.js`. If you get stuck, check the [`./final/`](./final/) directory for the complete implementation.
 
 ## 🚀 Quick Links
 
@@ -31,15 +31,15 @@ Import these files into Postman to easily follow and test the API requests descr
 
 This repository is structured for hands-on learning:
 
-- **Root directory**: Contains scaffolded files (`lookup.js`, `verify.js`) where you'll implement the Twilio API calls
-- **`./public/` directory**: Pre-built UI for testing your implementation
+- **`./build/` directory**: Contains scaffolded files (`lookup.js`, `verify.js`) where you'll implement the Twilio API calls
+- **`./build/public/` directory**: Pre-built UI for testing your implementation
 - **`./final/` directory**: Contains the complete, working implementation for reference
 
 ### Key files
 
-- [`lookup.js`](./lookup.js) - Implement Twilio Lookup API routes (basic lookup, line type intelligence, SMS pumping risk)
-- [`verify.js`](./verify.js) - Implement Twilio Verify API routes (send and validate verification codes)
-- [`server.js`](./server.js) - Pre-configured Express.js server (no edits needed)
+- [`build/lookup.js`](./build/lookup.js) - Implement Twilio Lookup API routes (basic lookup, line type intelligence, SMS pumping risk)
+- [`build/verify.js`](./build/verify.js) - Implement Twilio Verify API routes (send and validate verification codes)
+- [`build/server.js`](./build/server.js) - Pre-configured Express.js server (no edits needed)
 
 ---
 
