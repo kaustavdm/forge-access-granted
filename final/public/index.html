@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Onboarding Flow</title>
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+
+  <body>
+    <div id="app">
+      <!-- Step 1: Phone input -->
+      <form id="phone-form" class="step">
+        <h2>Enter your phone number</h2>
+        <input type="tel" id="phone" required placeholder="+1234567890" />
+        <button type="submit">Send OTP</button>
+        <div class="error" id="phone-error"></div>
+      </form>
+
+      <!-- Step 2: Phone OTP -->
+      <form id="phone-otp-form" class="step" style="display: none">
+        <h2>Enter the 6-digit code sent to your phone</h2>
+        <input
+          type="text"
+          id="phone-otp"
+          maxlength="6"
+          pattern="\d{6}"
+          required
+          placeholder="123456"
+        />
+        <button type="submit">Verify</button>
+        <div class="error" id="phone-otp-error"></div>
+        <a href="#" id="resend-phone-otp" class="resend-link disabled">Resend OTP in 30 seconds</a>
+        <a href="#" id="call-phone-otp" class="call-link" style="display: none">Call for OTP</a>
+      </form>
+
+      <!-- Step 3: Intermediate Dashboard -->
+      <div id="phone-verified-dashboard" class="step" style="display: none">
+        <h2>Phone Verified!</h2>
+        <p>Your have successfully verified your phone.</p>
+        <button id="verify-email-btn">Verify your email</button>
+      </div>
+
+      <!-- Step 4: Email input -->
+      <form id="email-form" class="step" style="display: none">
+        <h2>Enter your email</h2>
+        <input type="email" id="email" required placeholder="Email address" />
+        <button type="submit">Send OTP</button>
+        <div class="error" id="email-error"></div>
+      </form>
+
+      <!-- Step 5: Email OTP -->
+      <form id="email-otp-form" class="step" style="display: none">
+        <h2>Enter the 6-digit code sent to your email</h2>
+        <input
+          type="text"
+          id="email-otp"
+          maxlength="6"
+          pattern="\d{6}"
+          required
+          placeholder="123456"
+        />
+        <button type="submit">Verify</button>
+        <div class="error" id="email-otp-error"></div>
+      </form>
+
+      <!-- Step 6: Final Dashboard -->
+      <div id="dashboard" class="step" style="display: none">
+        <h2>Congratulations!</h2>
+        <p>You have completed onboarding!</p>
+      </div>
+    </div>
+
+    <script src="/main.js"></script>
+  </body>
+</html>

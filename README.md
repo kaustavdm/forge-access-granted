@@ -1,104 +1,45 @@
-# Forge Access Granted
+# Twilio Forge: Access Granted
 
-A multi-step user onboarding flow with email and phone verification using Twilio Verify and Lookup APIs.
+This repository contains follow-along steps and resources for the **"Twilio Forge: Access Granted"** workshop, focused on building a phone verification onboarding flow using Twilio Lookup and Verify APIs. It is designed to help you learn how to validate phone numbers, send verification codes, and create a complete user verification experience.
 
-## Overview
+## 📖 Main Resource: The Runbook
 
-This application demonstrates a complete onboarding experience where users verify their email address and phone number through OTP (One-Time Password) codes. Built with Node.js, Fastify, and vanilla JavaScript for a clean, maintainable architecture.
+The [RUNBOOK.md](./RUNBOOK.md) provides a step-by-step guide to:
 
-### Demo Flow
+- Setting up your Twilio account with API keys and Verify service
+- Using Twilio Lookup API to validate phone numbers
+- Implementing Line Type Intelligence and SMS Pumping Risk checks
+- Sending verification codes via SMS and voice using Twilio Verify API
+- Building a complete phone verification flow with a user-friendly UI
+- Testing your implementation with Postman
 
-1. User enters email → receives email OTP → validates code
-2. User enters phone → phone validation → receives SMS OTP → validates code
-3. Success dashboard displayed
+**Read the [RUNBOOK.md](./RUNBOOK.md) for detailed instructions and workshop steps.**
 
-## Quick Start
+> [!TIP]
+> The workshop uses a scaffolded Express.js application. You'll implement the Twilio API calls in `lookup.js` and `verify.js`. If you get stuck, check the [`./final/`](./final/) directory for the complete implementation.
 
-### Prerequisites
+## 🚀 Quick Links
 
-- Node.js (latest LTS version recommended)
-- Twilio account with Verify & Lookup services enabled
-- Sendgrid account with domain configured to send verify emails
-- Verify service Email sender configured
+### Postman resources
 
-### Getting Twilio Credentials
+- [Postman Collection](./Twilio%20Forge-%20Access%20Granted.postman_collection.json)
+- [Postman Environment](./Forge-%20Access%20Granted.postman_environment.json)
 
-You'll need three credentials from your Twilio Console:
+Import these files into Postman to easily follow and test the API requests described in the Runbook.
 
-`TWILIO_ACCOUNT_SID`:
+### Workshop structure
 
-- **Location**: [Twilio Console Dashboard](https://console.twilio.com/)
-- **Format**: Starts with "AC" + 32 hex characters
+This repository is structured for hands-on learning:
 
-`TWILIO_AUTH_TOKEN`:
+- **Root directory**: Contains scaffolded files (`lookup.js`, `verify.js`) where you'll implement the Twilio API calls
+- **`./public/` directory**: Pre-built UI for testing your implementation
+- **`./final/` directory**: Contains the complete, working implementation for reference
 
-- **Location**: [Twilio Console Dashboard](https://console.twilio.com/) - click "Show" next to Auth Token
-- **Security**: Keep this secret! Never expose in client code or repositories
+### Key files
 
-`TWILIO_VERIFY_SERVICE_SID`:
-
-- **Location**: [Twilio Console > Verify > Services](https://console.twilio.com/us1/develop/verify/services)
-- **Setup**: Create a new Verify service if you don't have one
-- **Format**: Starts with "VA" + 32 hex characters
-
-### Installation
-
-If you want to give the demo a try, without going through the runbook:
-
-<details>
-<summary>View installation steps</summary>
-
-1. **Clone the repository**
-   ```bash
-   git clone <repository-url>
-   cd forge-access-granted
-   ```
-
-2. **Install dependencies**
-   ```bash
-   npm install
-   ```
-
-3. **Set up environment variables**
-   ```bash
-   cp .env.example .env
-   # Edit .env with your Twilio credentials
-   ```
-
-4. **Configure Twilio credentials in `.env`**
-   ```env
-   TWILIO_ACCOUNT_SID=ACxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-   TWILIO_AUTH_TOKEN=your_auth_token_here
-   TWILIO_VERIFY_SERVICE_SID=VAxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-   PORT=3000
-   ```
-
-5. **Start the server**
-   ```bash
-   npm start
-   ```
-
-6. **Open your browser**
-   ```
-   http://localhost:3000
-   ```
-</details>
-
-## API Endpoints
-
-| Endpoint | Method | Description |
-|----------|--------|-------------|
-| `/api/lookup` | POST | Validate phone number using Twilio Lookup |
-| `/api/verify/email` | POST | Send email OTP |
-| `/api/verify/email/validate` | POST | Validate email OTP |
-| `/api/verify/phone` | POST | Send SMS OTP |
-| `/api/verify/phone/validate` | POST | Validate SMS OTP |
-
-## Documentation
-
-- **[runbook.md](./runbook.md)** - Complete implementation guide with step-by-step instructions
-- **[Twilio Verify Documentation](https://www.twilio.com/docs/verify)**
-- **[Twilio Lookup Documentation](https://www.twilio.com/docs/lookup)**
+- [`lookup.js`](./lookup.js) - Implement Twilio Lookup API routes (basic lookup, line type intelligence, SMS pumping risk)
+- [`verify.js`](./verify.js) - Implement Twilio Verify API routes (send and validate verification codes)
+- [`server.js`](./server.js) - Pre-configured Express.js server (no edits needed)
 
 ---
 

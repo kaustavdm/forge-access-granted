@@ -26,7 +26,7 @@ function handleError(error) {
   return { statusCode: 400, message: error.message };
 }
 
-// 2.1. Send verification code to phone by SMS or Voice
+// 2.1. Send verification code to phone by SMS
 router.post("/phone", async (req, res) => {
   try {
     const { phone, channel } = req.body;
@@ -34,10 +34,14 @@ router.post("/phone", async (req, res) => {
       return res.status(400).json({ error: "Phone required" });
     }
 
-    // TODO: Add implementation here
-    // 1. Determine which channel to use (sms or call)
-    // 2. Use twilioClient to create a verification
-    // 3. Return a success response
+    const selectedChannel =
+      channel === "sms" || channel === "call" ? channel : "sms";
+
+    await twilioClient.verify.v2
+      .services(verifyServiceSid)
+      .verifications.create({ to: phone, channel: selectedChannel });
+
+    res.json({ success: true });
   } catch (error) {
     const { statusCode, message } = handleError(error);
     res.status(statusCode).json({ error: message });
@@ -52,9 +56,11 @@ router.post("/phone/validate", async (req, res) => {
       return res.status(400).json({ error: "Phone and code required" });
     }
 
-    // TODO: Add implementation here
-    // 1. Use twilioClient to check the verification code
-    // 2. Return a response indicating if the code is valid
+    const result = await twilioClient.verify.v2
+      .services(verifyServiceSid)
+      .verificationChecks.create({ to: phone, code });
+
+    res.json({ valid: result.status === "approved" });
   } catch (error) {
     const { statusCode, message } = handleError(error);
     res.status(statusCode).json({ error: message });
@@ -69,9 +75,11 @@ router.post("/email", async (req, res) => {
       return res.status(400).json({ error: "Email required" });
     }
 
-    // TODO: Add implementation here
-    // 1. Use twilioClient to create an email verification
-    // 2. Return a success response
+    await twilioClient.verify.v2
+      .services(verifyServiceSid)
+      .verifications.create({ to: email, channel: "email" });
+
+    res.json({ success: true });
   } catch (error) {
     const { statusCode, message } = handleError(error);
     res.status(statusCode).json({ error: message });
@@ -86,9 +94,11 @@ router.post("/email/validate", async (req, res) => {
       return res.status(400).json({ error: "Email and code required" });
     }
 
-    // TODO: Add implementation here
-    // 1. Use twilioClient to check the verification code
-    // 2. Return a response indicating if the code is valid
+    const result = await twilioClient.verify.v2
+      .services(verifyServiceSid)
+      .verificationChecks.create({ to: email, code });
+
+    res.json({ valid: result.status === "approved" });
   } catch (error) {
     const { statusCode, message } = handleError(error);
     res.status(statusCode).json({ error: message });

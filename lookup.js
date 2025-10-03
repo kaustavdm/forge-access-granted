@@ -28,22 +28,10 @@ router.get("/:phone", async (req, res) => {
   try {
     const { phone } = req.params;
     const { countryCode } = req.query;
-    const opts = {};
 
-    if (countryCode) {
-      opts.countryCode = req.query.countryCode;
-    }
-
-    const result = await twilioClient.lookups.v2.phoneNumbers(phone).fetch(opts);
-
-    res.json({
-      valid: result.valid,
-      phoneNumber: result.phoneNumber,
-      nationalFormat: result.nationalFormat,
-      countryCode: result.countryCode,
-      callingCountryCode: result.callingCountryCode,
-      validationErrors: result.validationErrors,
-    });
+    // TODO: Add implementation here
+    // 1. Use the twilioClient to fetch phone number details
+    // 2. Return a properly formatted response
   } catch (error) {
     const { statusCode, message } = handleTwilioError(error);
     res.status(statusCode).json({ error: message });
@@ -54,53 +42,25 @@ router.get("/:phone", async (req, res) => {
 router.get("/:phone/line-type", async (req, res) => {
   try {
     const { phone } = req.params;
-    const opts = {
-      fields: ["line_type_intelligence"],
-    };
 
-    const result = await twilioClient.lookups.v2.phoneNumbers(phone).fetch(opts);
-
-    const lineType = result.lineTypeIntelligence?.type;
-
-    res.json({
-      valid: result.valid,
-      phoneNumber: result.phoneNumber,
-      nationalFormat: result.nationalFormat,
-      countryCode: result.countryCode,
-      callingCountryCode: result.callingCountryCode,
-      validationErrors: result.validationErrors,
-      // check for mobile
-      isMobile: lineType === "mobile",
-      // check for landline
-      isLandline: lineType === "landline",
-      // send the entire line type intelligence object
-      // lineTypeIntelligence: result.lineTypeIntelligence,
-    });
+    // TODO: Add implementation here
+    // 1. Use the twilioClient to fetch phone number details with line_type_intelligence
+    // 2. Extract the line type information
+    // 3. Return a properly formatted response
   } catch (error) {
     const { statusCode, message } = handleTwilioError(error);
     res.status(statusCode).json({ error: message });
   }
 });
 
-// 1.3. Lookup with line type intelligence
+// 1.3. Lookup with SMS pumping risk check
 router.get("/:phone/sms-pumping", async (req, res) => {
   try {
     const { phone } = req.params;
-    const opts = {
-      fields: ["sms_pumping_risk"],
-    };
 
-    const result = await twilioClient.lookups.v2.phoneNumbers(phone).fetch(opts);
-
-    res.json({
-      valid: result.valid,
-      phoneNumber: result.phoneNumber,
-      nationalFormat: result.nationalFormat,
-      countryCode: result.countryCode,
-      callingCountryCode: result.callingCountryCode,
-      validationErrors: result.validationErrors,
-      smsPumpingRisk: result.smsPumpingRisk,
-    });
+    // TODO: Add implementation here
+    // 1. Use the twilioClient to fetch phone number details with sms_pumping_risk
+    // 2. Return a properly formatted response
   } catch (error) {
     const { statusCode, message } = handleTwilioError(error);
     res.status(statusCode).json({ error: message });
@@ -112,22 +72,10 @@ router.get("/:phone/sms-pumping", async (req, res) => {
 router.get("/:phone/multiple", async (req, res) => {
   try {
     const { phone } = req.params;
-    const opts = {
-      fields: [
-        "line_type_intelligence", // Worldwide
-        "sms_pumping_risk", // Worldwide
-        // "sim_swap", // private beta
-        // "call_forwarding", // private beta
-        // "line_status", // private beta
-        // "identity_match", // Europe, LATAM, North America, Australia: https://www.twilio.com/docs/lookup/v2-api/identity-match
-        "caller_name", // US carrier numbers only
-        // "reassigned_number", // US only
-      ].join(),
-    };
 
-    const result = await twilioClient.lookups.v2.phoneNumbers(phone).fetch(opts);
-
-    res.json(result);
+    // TODO: Add implementation here
+    // 1. Use the twilioClient to fetch phone number details with multiple data packages
+    // 2. Return the full response
   } catch (error) {
     const { statusCode, message } = handleTwilioError(error);
     res.status(statusCode).json({ error: message });

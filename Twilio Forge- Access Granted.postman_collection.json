@@ -1,16 +1,16 @@
 {
 	"info": {
-		"_postman_id": "6c57702b-0c68-4531-8a69-e9cf482ff57b",
+		"_postman_id": "65c86259-c11b-4a88-a7da-3fb1e9bbdb8e",
 		"name": "Twilio Forge: Access Granted",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "43445318"
 	},
 	"item": [
 		{
-			"name": "1. Lookup phone number",
+			"name": "2. Lookup phone number",
 			"item": [
 				{
-					"name": "1.1 Lookup - Basic",
+					"name": "2.1 Lookup - Basic",
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -32,7 +32,7 @@
 					"response": []
 				},
 				{
-					"name": "1.1 Lookup - Basic - national number and country code",
+					"name": "2.1 Lookup - Basic - national number and country code",
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -60,7 +60,7 @@
 					"response": []
 				},
 				{
-					"name": "1.2 Lookup - Line Type Intelligence",
+					"name": "2.2 Lookup - Line Type Intelligence",
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -89,7 +89,7 @@
 					"response": []
 				},
 				{
-					"name": "1.3 Lookup - SMS pumping risk",
+					"name": "2.3 Lookup - SMS pumping risk",
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -118,7 +118,7 @@
 					"response": []
 				},
 				{
-					"name": "1.4 Lookup - Multiple packages",
+					"name": "2.4 Lookup - Multiple packages",
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -149,10 +149,10 @@
 			]
 		},
 		{
-			"name": "2. Send Verify code on phone",
+			"name": "3. Send Verify code on phone",
 			"item": [
 				{
-					"name": "Initiate Verify for phone number by SMS",
+					"name": "3.1 Initiate Verify for phone number by SMS",
 					"request": {
 						"method": "POST",
 						"header": [],
@@ -190,7 +190,7 @@
 					"response": []
 				},
 				{
-					"name": "Check Verify delivery status",
+					"name": "3.1 Check Verify delivery status",
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -212,6 +212,82 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "3.3 Initiate Verify for phone number by Voice",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "To",
+									"value": "{{PHONE_NUMBER}}",
+									"type": "text"
+								},
+								{
+									"key": "Channel",
+									"value": "call",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://verify.twilio.com/v2/Services/{{VERIFY_SERVICE_SID}}/Verifications",
+							"protocol": "https",
+							"host": [
+								"verify",
+								"twilio",
+								"com"
+							],
+							"path": [
+								"v2",
+								"Services",
+								"{{VERIFY_SERVICE_SID}}",
+								"Verifications"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "3.4 Validate Verify token for phone number",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "To",
+									"value": "{{PHONE_NUMBER}}",
+									"type": "text"
+								},
+								{
+									"key": "Code",
+									"value": "{{VERIFY_CODE}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://verify.twilio.com/v2/Services/{{VERIFY_SERVICE_SID}}/VerificationCheck",
+							"protocol": "https",
+							"host": [
+								"verify",
+								"twilio",
+								"com"
+							],
+							"path": [
+								"v2",
+								"Services",
+								"{{VERIFY_SERVICE_SID}}",
+								"VerificationCheck"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -219,7 +295,7 @@
 			"name": "Application endpoints",
 			"item": [
 				{
-					"name": "1.1 Basic lookup",
+					"name": "2.1 Basic lookup",
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -238,7 +314,7 @@
 					"response": []
 				},
 				{
-					"name": "1.1 Basic lookup with country code",
+					"name": "2.1 Basic lookup with country code",
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -263,7 +339,7 @@
 					"response": []
 				},
 				{
-					"name": "1.2 Lookup with Line Type Intelligence",
+					"name": "2.2 Lookup with Line Type Intelligence",
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -283,7 +359,7 @@
 					"response": []
 				},
 				{
-					"name": "1.3 Lookup with SMS Pumping Risk check",
+					"name": "2.3 Lookup with SMS Pumping Risk check",
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -303,7 +379,7 @@
 					"response": []
 				},
 				{
-					"name": "1.4 Lookup with multiple packages",
+					"name": "2.4 Lookup with multiple packages",
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -323,7 +399,7 @@
 					"response": []
 				},
 				{
-					"name": "2.1 Phone verification start - SMS",
+					"name": "3.1 Phone verification start - SMS",
 					"request": {
 						"method": "POST",
 						"header": [],
@@ -351,7 +427,7 @@
 					"response": []
 				},
 				{
-					"name": "2.2 Phone verification resend - SMS",
+					"name": "3.2. Phone verification resend - SMS",
 					"request": {
 						"method": "POST",
 						"header": [],
@@ -379,7 +455,7 @@
 					"response": []
 				},
 				{
-					"name": "2.3 Phone verification resend - Voice",
+					"name": "3.3 Phone verification resend - Voice",
 					"request": {
 						"method": "POST",
 						"header": [],
@@ -401,6 +477,35 @@
 								"api",
 								"verify",
 								"phone"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "3.4 Validate Verify token for phone",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"phone\": \"{{PHONE_NUMBER}}\",\n    \"code\": \"{{VERIFY_CODE}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{APP_URL}}/api/verify/phone/validate",
+							"host": [
+								"{{APP_URL}}"
+							],
+							"path": [
+								"api",
+								"verify",
+								"phone",
+								"validate"
 							]
 						}
 					},
