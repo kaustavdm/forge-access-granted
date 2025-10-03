@@ -9,22 +9,13 @@ const initialize = (client, serviceSid) => {
   verifyServiceSid = serviceSid;
 };
 
-// Handle error codes from Twilio Verify API
-function handleError(error) {
-  if (error.code === 20404) {
-    return { statusCode: 404, message: "Verification service not found" };
-  }
-  if (error.code === 60200) {
-    return { statusCode: 400, message: "Invalid phone number format" };
-  }
-  if (error.code === 60202) {
-    return { statusCode: 429, message: "Max verification attempts reached" };
-  }
-  if (error.code === 20003) {
-    return { statusCode: 403, message: "Authentication failed" };
-  }
-  return { statusCode: 400, message: error.message };
-}
+const errorRes = (status, message, code) => {
+  return {
+    status: status || 500,
+    message: message || "An error occurred",
+    code: code || "UNKNOWN_ERROR",
+  };
+};
 
 // 2.1. Send verification code to phone by SMS or Voice
 router.post("/phone", async (req, res) => {
@@ -39,8 +30,8 @@ router.post("/phone", async (req, res) => {
     // 2. Use twilioClient to create a verification
     // 3. Return a success response
   } catch (error) {
-    const { statusCode, message } = handleError(error);
-    res.status(statusCode).json({ error: message });
+    const err = errorRes(error.status, error.message, error.code);
+    res.status(err.status).json(err);
   }
 });
 
@@ -56,8 +47,8 @@ router.post("/phone/validate", async (req, res) => {
     // 1. Use twilioClient to check the verification code
     // 2. Return a response indicating if the code is valid
   } catch (error) {
-    const { statusCode, message } = handleError(error);
-    res.status(statusCode).json({ error: message });
+    const err = errorRes(error.status, error.message, error.code);
+    res.status(err.status).json(err);
   }
 });
 
@@ -73,8 +64,8 @@ router.post("/email", async (req, res) => {
     // 1. Use twilioClient to create an email verification
     // 2. Return a success response
   } catch (error) {
-    const { statusCode, message } = handleError(error);
-    res.status(statusCode).json({ error: message });
+    const err = errorRes(error.status, error.message, error.code);
+    res.status(err.status).json(err);
   }
 });
 
@@ -90,8 +81,8 @@ router.post("/email/validate", async (req, res) => {
     // 1. Use twilioClient to check the verification code
     // 2. Return a response indicating if the code is valid
   } catch (error) {
-    const { statusCode, message } = handleError(error);
-    res.status(statusCode).json({ error: message });
+    const err = errorRes(error.status, error.message, error.code);
+    res.status(err.status).json(err);
   }
 });
 

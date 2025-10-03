@@ -13,14 +13,12 @@ const initialize = (client) => {
   twilioClient = client;
 };
 
-const handleTwilioError = (error) => {
-  if (error.code === 20404) {
-    return { statusCode: 404, message: "Phone number not found or invalid" };
-  }
-  if (error.code === 20003) {
-    return { statusCode: 403, message: "Authentication failed" };
-  }
-  return { statusCode: 400, message: error.message };
+const errorRes = (status, message, code) => {
+  return {
+    status: status || 500,
+    message: message || "An error occurred",
+    code: code || "UNKNOWN_ERROR",
+  };
 };
 
 // 1.1. Basic Lookup for phone number
@@ -47,8 +45,8 @@ router.get("/:phone", async (req, res) => {
       validationErrors: result.validationErrors,
     });
   } catch (error) {
-    const { statusCode, message } = handleTwilioError(error);
-    res.status(statusCode).json({ error: message });
+    const err = errorRes(error.status, error.message, error.code);
+    res.status(err.status).json(err);
   }
 });
 
@@ -81,8 +79,8 @@ router.get("/:phone/line-type", async (req, res) => {
       // lineTypeIntelligence: result.lineTypeIntelligence,
     });
   } catch (error) {
-    const { statusCode, message } = handleTwilioError(error);
-    res.status(statusCode).json({ error: message });
+    const err = errorRes(error.status, error.message, error.code);
+    res.status(err.status).json(err);
   }
 });
 
@@ -108,8 +106,8 @@ router.get("/:phone/sms-pumping", async (req, res) => {
       smsPumpingRisk: result.smsPumpingRisk,
     });
   } catch (error) {
-    const { statusCode, message } = handleTwilioError(error);
-    res.status(statusCode).json({ error: message });
+    const err = errorRes(error.status, error.message, error.code);
+    res.status(err.status).json(err);
   }
 });
 
@@ -137,8 +135,8 @@ router.get("/:phone/multiple", async (req, res) => {
 
     res.json(result);
   } catch (error) {
-    const { statusCode, message } = handleTwilioError(error);
-    res.status(statusCode).json({ error: message });
+    const err = errorRes(error.status, error.message, error.code);
+    res.status(err.status).json(err);
   }
 });
 
