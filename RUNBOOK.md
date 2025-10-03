@@ -227,6 +227,15 @@ Let's review what you've implemented so far:
 
 ### 4. Implement Verify code for phone
 
+**Create a Verify service.**:
+
+- Go to **Twilio Console -> Verify -> Services**
+- Click "Create New"
+- Enable "SMS" and "Voice" channels
+- Save, and copy the new Verify service SID to:
+   - `VERIFY_SERVICE_SID` in `.env` file
+   - Optional: `VERIFY_SERVICE_SID` in Postman's environment.
+
 #### 4.1. Implement verify init for phone over SMS
 
 Open `verify.js` and locate the endpoint `POST /phone`. This endpoint should send verification codes via SMS or voice call.
