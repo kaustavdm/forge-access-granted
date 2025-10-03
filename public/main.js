@@ -28,6 +28,7 @@ const OnboardingFlow = (() => {
     // Buttons
     verifyEmailBtn: "#verify-email-btn",
     resendPhoneOtp: "#resend-phone-otp",
+    callPhoneOtp: "#call-phone-otp",
 
     // Error display elements
     emailError: "#email-error",
@@ -73,16 +74,18 @@ const OnboardingFlow = (() => {
     // Timer utilities for resend OTP functionality
     startResendTimer(duration = 30) {
       const resendLink = utils.$(selectors.resendPhoneOtp);
+      const callLink = utils.$(selectors.callPhoneOtp);
       
       // Clear any existing timer
       if (state.resendTimer) {
         clearInterval(state.resendTimer);
       }
       
-      // Set initial countdown and disable link
+      // Set initial countdown and disable/hide links
       state.resendCountdown = duration;
       resendLink.classList.add('disabled');
       resendLink.textContent = `Resend OTP in ${duration} seconds`;
+      callLink.style.display = 'none'; // Hide call link during countdown
       
       // Start countdown timer
       state.resendTimer = setInterval(() => {
@@ -91,11 +94,12 @@ const OnboardingFlow = (() => {
         if (state.resendCountdown > 0) {
           resendLink.textContent = `Resend OTP in ${state.resendCountdown} seconds`;
         } else {
-          // Timer finished, enable resend
+          // Timer finished, enable resend and show call link
           clearInterval(state.resendTimer);
           state.resendTimer = null;
           resendLink.classList.remove('disabled');
           resendLink.textContent = 'Resend OTP';
+          callLink.style.display = 'block'; // Show call link when timer expires
         }
       }, 1000);
     },
@@ -105,6 +109,12 @@ const OnboardingFlow = (() => {
         clearInterval(state.resendTimer);
         state.resendTimer = null;
         state.resendCountdown = 0;
+      }
+      
+      // Hide call link when timer is stopped
+      const callLink = utils.$(selectors.callPhoneOtp);
+      if (callLink) {
+        callLink.style.display = 'none';
       }
     },
   };
@@ -141,7 +151,7 @@ const OnboardingFlow = (() => {
       api.post("/api/verify/email/validate", { email, code }),
 
     // Phone verification APIs
-    verifyPhone: (phone) => api.post("/api/verify/phone", { phone }),
+    verifyPhone: (phone, channel = "sms") => api.post("/api/verify/phone", { phone, channel }),
     validatePhoneOtp: (phone, code) =>
       api.post("/api/verify/phone/validate", { phone, code }),
 
@@ -388,6 +398,36 @@ const OnboardingFlow = (() => {
         utils.showError(phoneError, "Network error.");
       }
     },
+
+    /**
+     * Call Phone OTP Handler
+     * Handles click on "Call for OTP" link in phone OTP form
+     */
+    async handleCallPhoneOtp(e) {
+      e.preventDefault();
+      
+      const phoneError = utils.$(selectors.phoneOtpError);
+      const callLink = utils.$(selectors.callPhoneOtp);
+      
+      // Clear any previous error messages
+      utils.clearError(phoneError);
+      
+      try {
+        // Call OTP using the saved phone number with "call" channel
+        const data = await api.verifyPhone(state.userPhone, "call");
+        
+        if (data.success) {
+          // Hide the call link after successful call
+          callLink.style.display = 'none';
+          // Show success message
+          callLink.style.display = 'none';
+        } else {
+          utils.showError(phoneError, data.error || "Failed to initiate call for OTP.");
+        }
+      } catch (err) {
+        utils.showError(phoneError, "Network error.");
+      }
+    },
   };
 
   /* ===== APPLICATION INITIALIZATION ===== */
@@ -408,6 +448,7 @@ const OnboardingFlow = (() => {
     utils.$(selectors.phoneForm).onsubmit = handlers.handlePhoneSubmit;
     utils.$(selectors.phoneOtpForm).onsubmit = handlers.handlePhoneOtpSubmit;
     utils.$(selectors.resendPhoneOtp).onclick = handlers.handleResendPhoneOtp;
+    utils.$(selectors.callPhoneOtp).onclick = handlers.handleCallPhoneOtp;
     utils.$(selectors.verifyEmailBtn).onclick = handlers.handleVerifyEmailClick;
     utils.$(selectors.emailForm).onsubmit = handlers.handleEmailSubmit;
     utils.$(selectors.emailOtpForm).onsubmit = handlers.handleEmailOtpSubmit;

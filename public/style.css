@@ -69,3 +69,21 @@ button:disabled {
 .resend-link.disabled:hover {
   text-decoration: none;
 }
+.call-link {
+  display: block;
+  text-align: center;
+  margin-top: 8px;
+  color: #0969da;
+  text-decoration: none;
+  font-size: 0.9em;
+  cursor: pointer;
+  border: 1px solid #0969da;
+  background: transparent;
+  padding: 8px 16px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+.call-link:hover {
+  background: #0969da;
+  color: white;
+}
