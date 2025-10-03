@@ -29,12 +29,14 @@ function handleError(error) {
 // 2.1. Send verification code to phone by SMS
 router.post("/phone", async (req, res) => {
   try {
-    const { phone } = req.body;
+    const { phone, channel } = req.body;
     if (!phone) {
       return res.status(400).json({ error: "Phone required" });
     }
 
-    await twilioClient.verify.v2.services(verifyServiceSid).verifications.create({ to: phone, channel: "sms" });
+    const selectedChannel = (channel === "sms" || channel === "call") ? channel : "sms";
+
+    await twilioClient.verify.v2.services(verifyServiceSid).verifications.create({ to: phone, channel: selectedChannel });
 
     res.json({ success: true });
   } catch (error) {

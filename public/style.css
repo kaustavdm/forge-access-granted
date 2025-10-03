@@ -49,3 +49,23 @@ button:disabled {
 #dashboard {
   text-align: center;
 }
+.resend-link {
+  display: block;
+  text-align: center;
+  margin-top: 12px;
+  color: #0969da;
+  text-decoration: none;
+  font-size: 0.9em;
+  cursor: pointer;
+}
+.resend-link:hover {
+  text-decoration: underline;
+}
+.resend-link.disabled {
+  color: #8c959f;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+.resend-link.disabled:hover {
+  text-decoration: none;
+}
