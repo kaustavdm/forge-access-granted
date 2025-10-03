@@ -16,6 +16,7 @@ const OnboardingFlow = (() => {
     emailOtpForm: "#email-otp-form",
     phoneForm: "#phone-form",
     phoneOtpForm: "#phone-otp-form",
+    phoneVerifiedDashboard: "#phone-verified-dashboard",
     dashboard: "#dashboard",
 
     // Input fields
@@ -23,6 +24,9 @@ const OnboardingFlow = (() => {
     emailOtpInput: "#email-otp",
     phoneInput: "#phone",
     phoneOtpInput: "#phone-otp",
+
+    // Buttons
+    verifyEmailBtn: "#verify-email-btn",
 
     // Error display elements
     emailError: "#email-error",
@@ -62,21 +66,6 @@ const OnboardingFlow = (() => {
     toggleButton(button, disabled) {
       button.disabled = disabled;
     },
-
-    // Basic email validation (checks for non-empty input)
-    validateEmail(email) {
-      return email.trim().length > 0;
-    },
-
-    // Validate 6-digit OTP codes
-    validateOtp(code) {
-      return /^\d{6}$/.test(code);
-    },
-
-    // Validate phone numbers in international format (+1234567890)
-    validatePhone(phone) {
-      return /^\+\d{10,15}$/.test(phone);
-    },
   };
 
   /* ===== API COMMUNICATION LAYER ===== */
@@ -93,16 +82,41 @@ const OnboardingFlow = (() => {
       return response.json();
     },
 
+    // Generic GET request wrapper for all API calls
+    async get(endpoint) {
+      const response = await fetch(endpoint, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+      });
+      return response.json();
+    },
+
+    // Health check API
+    healthCheck: () => api.get("/health"),
+
     // Email verification APIs
     verifyEmail: (email) => api.post("/api/verify/email", { email }),
     validateEmailOtp: (email, code) =>
       api.post("/api/verify/email/validate", { email, code }),
 
     // Phone verification APIs
-    lookupPhone: (phone) => api.post("/api/lookup", { phone }),
     verifyPhone: (phone) => api.post("/api/verify/phone", { phone }),
     validatePhoneOtp: (phone, code) =>
       api.post("/api/verify/phone/validate", { phone, code }),
+
+    // Phone lookup APIs (Twilio Lookup v2)
+    lookupPhone: (phone, countryCode) => {
+      const url = `/api/lookup/${encodeURIComponent(phone)}`;
+      return countryCode 
+        ? api.get(`${url}?countryCode=${encodeURIComponent(countryCode)}`)
+        : api.get(url);
+    },
+    lookupPhoneLineType: (phone) => 
+      api.get(`/api/lookup/${encodeURIComponent(phone)}/line-type`),
+    lookupPhoneSmsPumping: (phone) => 
+      api.get(`/api/lookup/${encodeURIComponent(phone)}/sms-pumping`),
+    lookupPhoneMultiple: (phone) => 
+      api.get(`/api/lookup/${encodeURIComponent(phone)}/multiple`),
   };
 
   /* ===== STEP MANAGEMENT ===== */
@@ -114,10 +128,11 @@ const OnboardingFlow = (() => {
     // Initialize step manager by collecting all step elements
     init() {
       this.allSteps = [
-        utils.$(selectors.emailForm),
-        utils.$(selectors.emailOtpForm),
         utils.$(selectors.phoneForm),
         utils.$(selectors.phoneOtpForm),
+        utils.$(selectors.phoneVerifiedDashboard),
+        utils.$(selectors.emailForm),
+        utils.$(selectors.emailOtpForm),
         utils.$(selectors.dashboard),
       ];
     },
@@ -134,92 +149,7 @@ const OnboardingFlow = (() => {
   // Each handler manages one step of the onboarding flow
   const handlers = {
     /**
-     * STEP 1: Email Submission
-     * Validates email input and sends verification code via Twilio
-     */
-    async handleEmailSubmit(e) {
-      e.preventDefault();
-
-      // Get form elements
-      const emailInput = utils.$(selectors.emailInput);
-      const emailError = utils.$(selectors.emailError);
-      const button = e.target.querySelector("button");
-
-      // Clear any previous error messages
-      utils.clearError(emailError);
-      const email = emailInput.value.trim();
-
-      // Validate email input
-      if (!utils.validateEmail(email)) {
-        return utils.showError(emailError, "Enter a valid email.");
-      }
-
-      // Disable button to prevent double submission
-      utils.toggleButton(button, true);
-
-      try {
-        // Send verification email via Twilio
-        const data = await api.verifyEmail(email);
-
-        if (data.success) {
-          // Save email and proceed to OTP verification step
-          state.userEmail = email;
-          stepManager.show(utils.$(selectors.emailOtpForm));
-        } else {
-          utils.showError(emailError, data.error || "Failed to send OTP.");
-        }
-      } catch (err) {
-        utils.showError(emailError, "Network error.");
-      } finally {
-        // Re-enable button regardless of outcome
-        utils.toggleButton(button, false);
-      }
-    },
-
-    /**
-     * STEP 2: Email OTP Validation
-     * Validates the 6-digit code sent to user's email
-     */
-    async handleEmailOtpSubmit(e) {
-      e.preventDefault();
-
-      // Get form elements
-      const otpInput = utils.$(selectors.emailOtpInput);
-      const otpError = utils.$(selectors.emailOtpError);
-      const button = e.target.querySelector("button");
-
-      // Clear any previous error messages
-      utils.clearError(otpError);
-      const code = otpInput.value.trim();
-
-      // Validate OTP format (6 digits)
-      if (!utils.validateOtp(code)) {
-        return utils.showError(otpError, "Enter 6 digit code.");
-      }
-
-      // Disable button to prevent double submission
-      utils.toggleButton(button, true);
-
-      try {
-        // Validate OTP with Twilio
-        const data = await api.validateEmailOtp(state.userEmail, code);
-
-        if (data.valid) {
-          // Email verified successfully, proceed to phone verification
-          stepManager.show(utils.$(selectors.phoneForm));
-        } else {
-          utils.showError(otpError, data.error || "Invalid code.");
-        }
-      } catch (err) {
-        utils.showError(otpError, "Network error.");
-      } finally {
-        // Re-enable button regardless of outcome
-        utils.toggleButton(button, false);
-      }
-    },
-
-    /**
-     * STEP 3: Phone Number Submission
+     * STEP 1: Phone Number Submission
      * Validates phone number and sends SMS verification code
      */
     async handlePhoneSubmit(e) {
@@ -233,14 +163,6 @@ const OnboardingFlow = (() => {
       // Clear any previous error messages
       utils.clearError(phoneError);
       const phone = phoneInput.value.trim();
-
-      // Validate phone number format
-      if (!utils.validatePhone(phone)) {
-        return utils.showError(
-          phoneError,
-          "Enter phone in +1234567890 format."
-        );
-      }
 
       // Disable button to prevent double submission
       utils.toggleButton(button, true);
@@ -271,7 +193,7 @@ const OnboardingFlow = (() => {
     },
 
     /**
-     * STEP 4: Phone OTP Validation
+     * STEP 2: Phone OTP Validation
      * Validates the 6-digit SMS code sent to user's phone
      */
     async handlePhoneOtpSubmit(e) {
@@ -286,11 +208,6 @@ const OnboardingFlow = (() => {
       utils.clearError(otpError);
       const code = otpInput.value.trim();
 
-      // Validate OTP format (6 digits)
-      if (!utils.validateOtp(code)) {
-        return utils.showError(otpError, "Enter 6 digit code.");
-      }
-
       // Disable button to prevent double submission
       utils.toggleButton(button, true);
 
@@ -299,7 +216,91 @@ const OnboardingFlow = (() => {
         const data = await api.validatePhoneOtp(state.userPhone, code);
 
         if (data.valid) {
-          // Phone verified successfully, onboarding complete!
+          // Phone verified successfully, show intermediate dashboard
+          stepManager.show(utils.$(selectors.phoneVerifiedDashboard));
+        } else {
+          utils.showError(otpError, data.error || "Invalid code.");
+        }
+      } catch (err) {
+        utils.showError(otpError, "Network error.");
+      } finally {
+        // Re-enable button regardless of outcome
+        utils.toggleButton(button, false);
+      }
+    },
+
+    /**
+     * STEP 3: Verify Email Button Handler
+     * Handles click on "Verify your email" button in intermediate dashboard
+     */
+    handleVerifyEmailClick() {
+      // Show the email form when the user clicks "Verify your email"
+      stepManager.show(utils.$(selectors.emailForm));
+    },
+
+    /**
+     * STEP 4: Email Submission
+     * Validates email input and sends verification code via Twilio
+     */
+    async handleEmailSubmit(e) {
+      e.preventDefault();
+
+      // Get form elements
+      const emailInput = utils.$(selectors.emailInput);
+      const emailError = utils.$(selectors.emailError);
+      const button = e.target.querySelector("button");
+
+      // Clear any previous error messages
+      utils.clearError(emailError);
+      const email = emailInput.value.trim();
+
+      // Disable button to prevent double submission
+      utils.toggleButton(button, true);
+
+      try {
+        // Send verification email via Twilio
+        const data = await api.verifyEmail(email);
+
+        if (data.success) {
+          // Save email and proceed to OTP verification step
+          state.userEmail = email;
+          stepManager.show(utils.$(selectors.emailOtpForm));
+        } else {
+          utils.showError(emailError, data.error || "Failed to send OTP.");
+        }
+      } catch (err) {
+        utils.showError(emailError, "Network error.");
+      } finally {
+        // Re-enable button regardless of outcome
+        utils.toggleButton(button, false);
+      }
+    },
+
+    /**
+     * STEP 5: Email OTP Validation
+     * Validates the 6-digit code sent to user's email
+     */
+    async handleEmailOtpSubmit(e) {
+      e.preventDefault();
+
+      // Get form elements
+      const otpInput = utils.$(selectors.emailOtpInput);
+      const otpError = utils.$(selectors.emailOtpError);
+      const button = e.target.querySelector("button");
+
+      // Clear any previous error messages
+      utils.clearError(otpError);
+      const code = otpInput.value.trim();
+
+      // Disable button to prevent double submission
+      utils.toggleButton(button, true);
+
+      try {
+        // Validate OTP with Twilio
+        const data = await api.validateEmailOtp(state.userEmail, code);
+
+        if (data.valid) {
+          // Email verified successfully, onboarding complete!
           stepManager.show(utils.$(selectors.dashboard));
         } else {
           utils.showError(otpError, data.error || "Invalid code.");
@@ -326,12 +327,13 @@ const OnboardingFlow = (() => {
     // This collects all form elements and prepares them for show/hide operations
     stepManager.init();
 
-    // Step 2: Bind event handlers to each form
+    // Step 2: Bind event handlers to each form and button
     // This connects user interactions to the appropriate handler functions
-    utils.$(selectors.emailForm).onsubmit = handlers.handleEmailSubmit;
-    utils.$(selectors.emailOtpForm).onsubmit = handlers.handleEmailOtpSubmit;
     utils.$(selectors.phoneForm).onsubmit = handlers.handlePhoneSubmit;
     utils.$(selectors.phoneOtpForm).onsubmit = handlers.handlePhoneOtpSubmit;
+    utils.$(selectors.verifyEmailBtn).onclick = handlers.handleVerifyEmailClick;
+    utils.$(selectors.emailForm).onsubmit = handlers.handleEmailSubmit;
+    utils.$(selectors.emailOtpForm).onsubmit = handlers.handleEmailOtpSubmit;
 
     // Application is now ready for user interaction
     console.log("Onboarding flow initialized successfully");
