@@ -67,6 +67,8 @@ The npm scripts make it easy to run either version:
 
 #### 1.3 Clone repo and setup application
 
+Clone repo and install dependencies:
+
 ```bash
 # Clone the repository
 git clone <repository-url>
@@ -74,14 +76,26 @@ cd forge-access-granted
 
 # Install dependencies
 npm install
+```
 
+Create a `.env` with the credentials you already have:
+
+```bash
 # Create .env file (see Environment Variables section)
 cp .env.example .env
-# Edit .env with your credentials
 
-# Start the server
+# Update .env with your credentials
+```
+
+Start the server and check that everything works. The following command will start our `build` server:
+
+```bash
 npm start
 ```
+
+Navigate to [`http://localhost:3000`](http://localhost:3000). You should see a form asking for a phone number.
+
+✅ Setup done.
 
 ---
 
