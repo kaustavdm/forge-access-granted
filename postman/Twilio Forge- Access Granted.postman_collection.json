@@ -190,7 +190,7 @@
 					"response": []
 				},
 				{
-					"name": "3.1 Check Verify delivery status",
+					"name": "3.1 Check Verify status",
 					"request": {
 						"method": "GET",
 						"header": [],
