@@ -8,14 +8,14 @@
 
 ---
 
-## 📋 Prerequisites
+## Prerequisites
 
 - **Node.js** (latest LTS version recommended)
 - **HTTP client**, Postman preferred
 - **Twilio Account**, upgraded and active
 - **Basic knowledge:** JavaScript/Node.js, HTML/CSS, HTTP APIs
 
-## 📁 Project Structure
+## Project Structure
 
 This workshop is organized with npm workspaces to simplify dependency management:
 
@@ -29,9 +29,9 @@ The npm scripts make it easy to run either version:
 
 ---
 
-## 🔨 Build
+## Build
 
-### 1. ⚙️ Setup
+### 1. Setup
 
 #### 1.1 Create Twilio API keys and Account SID
 
@@ -102,7 +102,7 @@ Navigate to [`http://localhost:3000`](http://localhost:3000). You should see a f
 
 ---
 
-### 2. 🔍 Lookup phone numbers using Twilio API (using Postman)
+### 2. Lookup phone numbers using Twilio API (using Postman)
 
 In this section, you'll explore the Twilio Lookup API through Postman to understand phone number validation and data enrichment.
 
@@ -170,7 +170,7 @@ You can request multiple data packages in a single lookup.
 
 ---
 
-### 3. 💻 Implement lookup in code
+### 3. Implement lookup in code
 
 Now that you understand how the Lookup API works, let's implement it in the application code.
 
@@ -206,6 +206,34 @@ Open `build/lookup.js` and locate the endpoint `GET /:phone`. This endpoint shou
 3. Send the **"2.1 Basic lookup"** request
 4. You should receive a response with phone number details
 
+<details>
+<summary>💡 Click to see the solution</summary>
+
+```javascript
+const { phone } = req.params;
+const { countryCode } = req.query;
+const opts = {};
+
+if (countryCode) {
+  opts.countryCode = req.query.countryCode;
+}
+
+const result = await twilioClient.lookups.v2
+  .phoneNumbers(phone)
+  .fetch(opts);
+
+res.json({
+  valid: result.valid,
+  phoneNumber: result.phoneNumber,
+  nationalFormat: result.nationalFormat,
+  countryCode: result.countryCode,
+  callingCountryCode: result.callingCountryCode,
+  validationErrors: result.validationErrors,
+});
+```
+
+</details>
+
 #### 3.2 Implement lookup with line type intelligence
 
 Locate the endpoint `GET /:phone/line-type` in `build/lookup.js`.
@@ -225,6 +253,37 @@ Locate the endpoint `GET /:phone/line-type` in `build/lookup.js`.
 1. Send the **"2.2 Lookup with Line Type Intelligence"** request
 2. Verify that the response includes the line type information
 
+<details>
+<summary>💡 Click to see the solution</summary>
+
+```javascript
+const { phone } = req.params;
+const opts = {
+  fields: ["line_type_intelligence"],
+};
+
+const result = await twilioClient.lookups.v2
+  .phoneNumbers(phone)
+  .fetch(opts);
+
+const lineType = result.lineTypeIntelligence?.type;
+
+res.json({
+  valid: result.valid,
+  phoneNumber: result.phoneNumber,
+  nationalFormat: result.nationalFormat,
+  countryCode: result.countryCode,
+  callingCountryCode: result.callingCountryCode,
+  validationErrors: result.validationErrors,
+  // check for mobile
+  isMobile: lineType === "mobile",
+  // check for landline
+  isLandline: lineType === "landline",
+});
+```
+
+</details>
+
 #### 3.3 Implement lookup with SMS pumping check
 
 Locate the endpoint `GET /:phone/sms-pumping` in `build/lookup.js`.
@@ -241,6 +300,32 @@ Locate the endpoint `GET /:phone/sms-pumping` in `build/lookup.js`.
 
 1. Send the **"2.3 Lookup with SMS Pumping Risk check"** request
 2. Verify that the response includes the SMS pumping risk information
+
+<details>
+<summary>💡 Click to see the solution</summary>
+
+```javascript
+const { phone } = req.params;
+const opts = {
+  fields: ["sms_pumping_risk"],
+};
+
+const result = await twilioClient.lookups.v2
+  .phoneNumbers(phone)
+  .fetch(opts);
+
+res.json({
+  valid: result.valid,
+  phoneNumber: result.phoneNumber,
+  nationalFormat: result.nationalFormat,
+  countryCode: result.countryCode,
+  callingCountryCode: result.callingCountryCode,
+  validationErrors: result.validationErrors,
+  smsPumpingRisk: result.smsPumpingRisk,
+});
+```
+
+</details>
 
 #### 3.4 Implement lookup with multiple checks
 
@@ -260,7 +345,34 @@ Locate the endpoint `GET /:phone/multiple` in `build/lookup.js`.
 1. Send the **"2.4 Lookup with multiple packages"** request
 2. Verify that the response includes multiple data packages
 
-#### 3.5 🎯 Test the APIs so far + showcase UI for phone screen
+<details>
+<summary>💡 Click to see the solution</summary>
+
+```javascript
+const { phone } = req.params;
+const opts = {
+  fields: [
+    "line_type_intelligence", // Worldwide
+    "sms_pumping_risk", // Worldwide
+    // "sim_swap", // private beta
+    // "call_forwarding", // private beta
+    // "line_status", // private beta
+    // "identity_match", // Europe, LATAM, North America, Australia
+    "caller_name", // US carrier numbers only
+    // "reassigned_number", // US only
+  ].join(),
+};
+
+const result = await twilioClient.lookups.v2
+  .phoneNumbers(phone)
+  .fetch(opts);
+
+res.json(result);
+```
+
+</details>
+
+#### 3.5 Test the APIs so far + showcase UI for phone screen
 
 Now that we've implemented and tested the Lookup APIs, let's check out the UI:
 
@@ -270,7 +382,7 @@ Now that we've implemented and tested the Lookup APIs, let's check out the UI:
 
 The UI automatically uses the Lookup API to validate the phone number before attempting to send an OTP.
 
-#### 3.6 📝 Review
+#### 3.6 Review
 
 Let's review what you've implemented so far:
 
@@ -284,7 +396,7 @@ Let's review what you've implemented so far:
 
 ---
 
-### 4. 🔐 Implement Verify code for phone
+### 4. Implement Verify code for phone
 
 With phone lookup complete, it's time to implement the verification flow using Twilio Verify API.
 
@@ -318,6 +430,27 @@ Open `build/verify.js` and locate the endpoint `POST /phone`. This endpoint shou
 
 1. Send the **"3.1 Phone verification start - SMS"** request
 2. Verify that you receive an SMS with a verification code
+
+<details>
+<summary>💡 Click to see the solution</summary>
+
+```javascript
+const { phone, channel } = req.body;
+if (!phone) {
+  return res.status(400).json({ error: "Phone required" });
+}
+
+const selectedChannel =
+  channel === "sms" || channel === "call" ? channel : "sms";
+
+await twilioClient.verify.v2
+  .services(verifyServiceSid)
+  .verifications.create({ to: phone, channel: selectedChannel });
+
+res.json({ success: true });
+```
+
+</details>
 
 #### 4.2. Resend code strategy
 
@@ -370,7 +503,25 @@ Locate the endpoint `POST /phone/validate` in `build/verify.js`.
 3. Send the **"3.4 Validate Verify token for phone"** request
 4. Verify that you receive a response with `"valid": true`
 
-#### 4.5. 🎯 Demo the UI
+<details>
+<summary>💡 Click to see the solution</summary>
+
+```javascript
+const { phone, code } = req.body;
+if (!phone || !code) {
+  return res.status(400).json({ error: "Phone and code required" });
+}
+
+const result = await twilioClient.verify.v2
+  .services(verifyServiceSid)
+  .verificationChecks.create({ to: phone, code });
+
+res.json({ valid: result.status === "approved" });
+```
+
+</details>
+
+#### 4.5. Demo the UI
 
 Now test your complete implementation in the UI:
 
@@ -380,7 +531,7 @@ Now test your complete implementation in the UI:
 4. Notice the resend OTP option (with countdown) and call option
 5. After successful verification, you'll see the completion screen
 
-#### 4.6 📝 Review
+#### 4.6 Review
 
 Congratulations! You've implemented:
 
