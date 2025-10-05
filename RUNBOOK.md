@@ -51,9 +51,6 @@ The npm scripts make it easy to run either version:
 
 #### 1.2 Setup Postman
 
-> [!NOTE]
-> While this workshop uses Postman, you will also find cURL commands for each HTTP request.
-
 1. Download and install [Postman](https://www.postman.com/downloads/) if you haven't already
 2. Import the [Postman collection](./postman/Twilio%20Forge-%20Access%20Granted.postman_collection.json) included in this repository
 3. Import the [Postman environment](./postman/Forge-%20Access%20Granted.postman_environment.json) or Create a new Environment in Postman with the following variables:
@@ -409,8 +406,8 @@ With phone lookup complete, it's time to implement the verification flow using T
 2. Click **"Create New"**
 3. Enable **SMS** and **Voice** channels
 4. Save and copy the new Verify service SID to:
-   - `VERIFY_SERVICE_SID` in your `.env` file
-   - (Optional) `VERIFY_SERVICE_SID` in Postman's environment
+   - `TWILIO_VERIFY_SERVICE_SID` in your `.env` file
+   - `VERIFY_SERVICE_SID` in Postman's environment
 
 #### 4.1. Implement verify init for phone over SMS
 
@@ -460,7 +457,7 @@ The same endpoint `/api/verify/phone` you just implemented can be used to resend
 
 - Your implementation already handles resending - just call the endpoint again
 - The frontend maintains a cooldown timer to prevent abuse
-- **Twilio Verify** handles rate limiting on the server side
+- Twilio Verify handles the code generation on the server side
 
 **Test this implementation:**
 
@@ -498,8 +495,8 @@ Locate the endpoint `POST /phone/validate` in `build/verify.js`.
 
 **Test this implementation:**
 
-1. Send the **"3.1 Phone verification start - SMS"** request to get a code
-2. When you receive the code, update the `VERIFY_CODE` variable in your Postman environment
+1. Send the **"Application Endpoints" -> "3.1 Phone verification start - SMS"** request to get a code
+2. When you receive the code, update the `code` field in the **"3.4 Validate Verify token for phone"** request body
 3. Send the **"3.4 Validate Verify token for phone"** request
 4. Verify that you receive a response with `"valid": true`
 
