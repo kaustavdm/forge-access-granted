@@ -14,6 +14,7 @@ const verifyRoutes = require("./verify");
 const requiredEnvVars = [
   "TWILIO_API_KEY_SID",
   "TWILIO_API_KEY_SECRET",
+  "TWILIO_ACCOUNT_SID",
   "TWILIO_VERIFY_SERVICE_SID",
 ];
 
@@ -90,6 +91,7 @@ const HOST = process.env.HOST || "0.0.0.0";
 
 const server = app.listen(PORT, HOST, () => {
   console.log(`Server running on http://${HOST}:${PORT}`);
+  console.log(`Running: build`);
   console.log(`Environment: ${process.env.NODE_ENV || "development"}`);
 });
 

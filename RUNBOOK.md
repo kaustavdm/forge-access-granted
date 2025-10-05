@@ -33,7 +33,9 @@ The npm scripts make it easy to run either version:
 
 ### 1. Setup
 
-#### 1.1 Create Twilio API keys
+#### 1.1 Create Twilio API keys and Account SID
+
+**Create API Key:**
 
 1. Log in to your [Twilio Console](https://console.twilio.com/)
 2. Navigate to Account Info > API Keys
@@ -41,13 +43,23 @@ The npm scripts make it easy to run either version:
 4. Enter a friendly name for your API key (e.g., "Forge Access Granted")
 5. Save your API Key SID and Secret securely - the Secret will only be shown once!
 
+**Get account SID:**
+
+1. Go back to the [Twilio Console Account Dashboard](https://console.twilio.com/)
+2. Copy your account SID under Account Info -> Account SID.
+3. We will need this for our application later.
+
 #### 1.2 Setup Postman
+
+> [!NOTE]
+> While this workshop uses Postman, you will also find cURL commands for each HTTP request.
 
 1. Download and install [Postman](https://www.postman.com/downloads/) if you haven't already
 2. Import the [Postman collection](./postman/Twilio%20Forge-%20Access%20Granted.postman_collection.json) included in this repository
 3. Import the [Postman environment](./postman/Forge-%20Access%20Granted.postman_environment.json) or Create a new Environment in Postman with the following variables:
    - `TWILIO_API_KEY_SID`: Your Twilio API Key SID
    - `TWILIO_API_KEY_SECRET`: Your Twilio API Key Secret
+   - `TWILIO_ACCOUNT_SID`: Your Twilio Account SID.
    - `PHONE_NUMBER`: A phone number to test with (in E.164 format, e.g., +1234567890)
    - `COUNTRY_CODE`: Your country code (e.g., US)
    - `VERIFY_SERVICE_SID`: Your Twilio Verify Service SID (we'll create this later)
