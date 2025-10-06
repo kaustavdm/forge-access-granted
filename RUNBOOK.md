@@ -109,7 +109,7 @@ The Lookup API allows you to verify whether a phone number exists and get additi
 
 **Steps:**
 
-1. In Postman, select the **"2.1 Lookup - Basic"** request
+1. In Postman, select the **"[API] Lookup phone number" -> "Lookup - Basic"** request
 2. Make sure your environment is selected with the correct `PHONE_NUMBER` variable
 3. Send the request
 4. Observe the response, which includes:
@@ -121,7 +121,7 @@ The Lookup API allows you to verify whether a phone number exists and get additi
 
 **Alternative:** You can also provide a national number with a country code:
 
-1. Select the "2.1 Lookup - Basic - national number and country code" request
+1. Select the "[API] Lookup phone number" -> "Lookup - Basic - national number and country code" request
 2. Update the `PHONE_NUMBER` and `COUNTRY_CODE` variables in your environment
 3. Send the request
 4. Observe the response
@@ -132,7 +132,7 @@ The Lookup API allows you to verify whether a phone number exists and get additi
 
 **Steps:**
 
-1. Select the **"2.2 Lookup - Line Type Intelligence"** request
+1. Select the **"[API] Lookup phone number" -> "Lookup - Line Type Intelligence"** request
 2. Observe the added query param for `Fields` set to `line_type_intelligence`
 3. Send the request
 4. Observe the extended response, which includes:
@@ -145,7 +145,7 @@ The Lookup API allows you to verify whether a phone number exists and get additi
 
 **Steps:**
 
-1. Select the **"2.3 Lookup - SMS pumping risk"** request
+1. Select the **"[API] Lookup phone number" -> "Lookup - SMS pumping risk"** request
 2. Observe the added query param for `Fields` set to `sms_pumping_risk`
 3. Send the request
 4. Observe the response, which includes:
@@ -157,7 +157,7 @@ You can request multiple data packages in a single lookup.
 
 **Steps:**
 
-1. Select the **"2.4 Lookup - Multiple packages"** request
+1. Select the **"[API] Lookup phone number" -> "Lookup - Multiple packages"** request
 2. Observe the added query param for `Fields` set to multiple package names
 3. Send the request
 4. Observe the comprehensive response with multiple data packages
@@ -199,9 +199,8 @@ Open `build/lookup.js` and locate the endpoint `GET /:phone`. This endpoint shou
 **To test the implementation:**
 
 1. Start your server: `npm start` (or `npm run start:build`)
-2. In Postman, select the **"Application endpoints"** folder
-3. Send the **"2.1 Basic lookup"** request
-4. You should receive a response with phone number details
+2. In Postman, send the **"Application endpoints" -> "3.1 Basic lookup"** request
+3. You should receive a response with phone number details
 
 <details>
 <summary>💡 Click to see the solution</summary>
@@ -231,6 +230,8 @@ res.json({
 
 </details>
 
+---
+
 #### 3.2 Implement lookup with line type intelligence
 
 Locate the endpoint `GET /:phone/line-type` in `build/lookup.js`.
@@ -247,7 +248,7 @@ Locate the endpoint `GET /:phone/line-type` in `build/lookup.js`.
 
 **Test this implementation:**
 
-1. Send the **"2.2 Lookup with Line Type Intelligence"** request
+1. In Postmanan, send the **"Application endpoints" -> "3.2 Lookup with Line Type Intelligence"** request
 2. Verify that the response includes the line type information
 
 <details>
@@ -281,6 +282,8 @@ res.json({
 
 </details>
 
+---
+
 #### 3.3 Implement lookup with SMS pumping check
 
 Locate the endpoint `GET /:phone/sms-pumping` in `build/lookup.js`.
@@ -295,7 +298,7 @@ Locate the endpoint `GET /:phone/sms-pumping` in `build/lookup.js`.
 
 **Test this implementation:**
 
-1. Send the **"2.3 Lookup with SMS Pumping Risk check"** request
+1. In Postman, send the **"Application endpoints" -> "3.3 Lookup with SMS Pumping Risk check"** request
 2. Verify that the response includes the SMS pumping risk information
 
 <details>
@@ -324,6 +327,8 @@ res.json({
 
 </details>
 
+---
+
 #### 3.4 Implement lookup with multiple checks
 
 Locate the endpoint `GET /:phone/multiple` in `build/lookup.js`.
@@ -339,7 +344,7 @@ Locate the endpoint `GET /:phone/multiple` in `build/lookup.js`.
 
 **Test this implementation:**
 
-1. Send the **"2.4 Lookup with multiple packages"** request
+1. In Postman, send the **"Application endpoints" -> "3.4 Lookup with multiple packages"** request
 2. Verify that the response includes multiple data packages
 
 <details>
@@ -368,6 +373,8 @@ res.json(result);
 ```
 
 </details>
+
+---
 
 #### 3.5 Test the APIs so far + showcase UI for phone screen
 
@@ -423,11 +430,6 @@ Open `build/verify.js` and locate the endpoint `POST /phone`. This endpoint shou
 - Return a success response: `{ success: true }`
 - Input validation is already implemented
 
-**Test this implementation:**
-
-1. Send the **"3.1 Phone verification start - SMS"** request
-2. Verify that you receive an SMS with a verification code
-
 <details>
 <summary>💡 Click to see the solution</summary>
 
@@ -449,20 +451,48 @@ res.json({ success: true });
 
 </details>
 
+**Test this implementation:**
+
+1. Go to `http://localhost:3000` and add phone number. Click "Verify"
+2. You should see the next screen asking for the code.
+
+<details>
+<summary>Test with Postman instead</summary>
+Alternatively,
+
+1. In Postman, send the **"Application endpoints" -> "4.1 Phone verification start - SMS"** request
+2. Verify that you receive an SMS with a verification code
+
+</details>
+
+---
+
 #### 4.2. Resend code strategy
 
 The same endpoint `/api/verify/phone` you just implemented can be used to resend verification codes.
 
 **Key implementation points:**
 
-- Your implementation already handles resending - just call the endpoint again
+- Your implementation already handles resending - _just call the endpoint again_
 - The frontend maintains a cooldown timer to prevent abuse
 - Twilio Verify handles the code generation on the server side
 
 **Test this implementation:**
 
-1. Send the **"3.2. Phone verification resend - SMS"** request
-2. Verify that you receive another SMS with a verification code
+- In the UI, wait till the "Resend code" link activates.
+- With your browser's devtools open to the network tab, click "Resend code"
+- The UI is configured to send the request to the same endpoint.
+
+<details>
+<summary>Test with Postman instead</summary>
+Alternatively,
+
+1. In Postman, send the **"Application endpoints" -> "4.2 Phone verification resend - SMS"** request
+2. Verify that you receive an SMS with a verification code
+
+</details>
+
+---
 
 #### 4.3. Resend code over Voice
 
@@ -476,8 +506,20 @@ Your `/api/verify/phone` implementation already supports sending verification co
 
 **Test this implementation:**
 
-1. Send the **"3.3 Phone verification resend - Voice"** request
+- In the UI, wait till the "Resend code" link activates again.
+- This time, click on the "Call for OTP" button. Notice the UI sends the request with `"channel": "call"`.
+- You should receive a call on your phone.
+
+<details>
+<summary>Test with Postman instead</summary>
+Alternatively,
+
+1. Send the **"Application endpoints" -> "4.3 Phone verification resend - Voice"** request
 2. Verify that you receive a phone call with the verification code
+
+</details>
+
+---
 
 #### 4.4. Implement code validation
 
@@ -492,13 +534,6 @@ Locate the endpoint `POST /phone/validate` in `build/verify.js`.
 - Check if `result.status === "approved"`
 - Return `{ valid: true }` or `{ valid: false }` based on the status
 - Input validation is already implemented
-
-**Test this implementation:**
-
-1. Send the **"Application Endpoints" -> "3.1 Phone verification start - SMS"** request to get a code
-2. When you receive the code, update the `code` field in the **"3.4 Validate Verify token for phone"** request body
-3. Send the **"3.4 Validate Verify token for phone"** request
-4. Verify that you receive a response with `"valid": true`
 
 <details>
 <summary>💡 Click to see the solution</summary>
@@ -518,6 +553,8 @@ res.json({ valid: result.status === "approved" });
 
 </details>
 
+---
+
 #### 4.5. Demo the UI
 
 Now test your complete implementation in the UI:
@@ -527,6 +564,17 @@ Now test your complete implementation in the UI:
 3. Enter the verification code you receive and click "Verify"
 4. Notice the resend OTP option (with countdown) and call option
 5. After successful verification, you'll see the completion screen
+
+<details>
+<summary>Test with Postman instead</summary>
+Alternatively,
+
+1. Send the **"Application Endpoints" -> "4.1 Phone verification start - SMS"** request to get a code
+2. When you receive the code, update the `code` field in the **"Application Endpoints" -> "4.4 Validate Verify token for phone"** request body, or update the value of the `VERIFY_CODE` variable.
+3. Send the **"Application Endpoints" -> "4.4 Validate Verify token for phone"** request
+4. Verify that you receive a response with `"valid": true`
+
+</details>
 
 #### 4.6 Review
 

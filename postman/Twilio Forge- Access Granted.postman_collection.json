@@ -7,10 +7,10 @@
 	},
 	"item": [
 		{
-			"name": "2. Lookup phone number",
+			"name": "[API] Lookup phone number",
 			"item": [
 				{
-					"name": "2.1 Lookup - Basic",
+					"name": "Lookup - Basic",
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -32,7 +32,7 @@
 					"response": []
 				},
 				{
-					"name": "2.1 Lookup - Basic - national number and country code",
+					"name": "Lookup - Basic - national number and country code",
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -60,12 +60,12 @@
 					"response": []
 				},
 				{
-					"name": "2.2 Lookup - Line Type Intelligence",
+					"name": "Lookup - Line Type Intelligence",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "https://lookups.twilio.com/v2/PhoneNumbers/{{PHONE_NUMBER}}?Fields=line_type_intelligence",
+							"raw": "https://lookups.twilio.com/v2/PhoneNumbers/{{PHONE_NUMBER}}?Fields=line_type_intelligence&CountryCode={{COUNTRY_CODE}}",
 							"protocol": "https",
 							"host": [
 								"lookups",
@@ -82,6 +82,10 @@
 									"key": "Fields",
 									"value": "line_type_intelligence",
 									"description": "Enable the Line Type Intelligence package by specifying it in `Fields`."
+								},
+								{
+									"key": "CountryCode",
+									"value": "{{COUNTRY_CODE}}"
 								}
 							]
 						}
@@ -89,7 +93,7 @@
 					"response": []
 				},
 				{
-					"name": "2.3 Lookup - SMS pumping risk",
+					"name": "Lookup - SMS pumping risk",
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -118,7 +122,7 @@
 					"response": []
 				},
 				{
-					"name": "2.4 Lookup - Multiple packages",
+					"name": "Lookup - Multiple packages",
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -149,10 +153,10 @@
 			]
 		},
 		{
-			"name": "3. Send Verify code on phone",
+			"name": "[API] Verify phone number",
 			"item": [
 				{
-					"name": "3.1 Initiate Verify for phone number by SMS",
+					"name": "Initiate Verify for phone number by SMS",
 					"request": {
 						"method": "POST",
 						"header": [],
@@ -190,7 +194,7 @@
 					"response": []
 				},
 				{
-					"name": "3.1 Check Verify status",
+					"name": "Check Verify status",
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -214,7 +218,7 @@
 					"response": []
 				},
 				{
-					"name": "3.3 Initiate Verify for phone number by Voice",
+					"name": "Initiate Verify for phone number by Voice",
 					"request": {
 						"method": "POST",
 						"header": [],
@@ -252,7 +256,7 @@
 					"response": []
 				},
 				{
-					"name": "3.4 Validate Verify token for phone number",
+					"name": "Validate Verify token for phone number",
 					"request": {
 						"method": "POST",
 						"header": [],
@@ -295,7 +299,7 @@
 			"name": "Application endpoints",
 			"item": [
 				{
-					"name": "2.1 Basic lookup",
+					"name": "3.1 Basic lookup",
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -314,7 +318,7 @@
 					"response": []
 				},
 				{
-					"name": "2.1 Basic lookup with country code",
+					"name": "3.1 Basic lookup with country code",
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -339,7 +343,7 @@
 					"response": []
 				},
 				{
-					"name": "2.2 Lookup with Line Type Intelligence",
+					"name": "3.2 Lookup with Line Type Intelligence",
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -359,7 +363,7 @@
 					"response": []
 				},
 				{
-					"name": "2.3 Lookup with SMS Pumping Risk check",
+					"name": "3.3 Lookup with SMS Pumping Risk check",
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -379,7 +383,7 @@
 					"response": []
 				},
 				{
-					"name": "2.4 Lookup with multiple packages",
+					"name": "3.4 Lookup with multiple packages",
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -399,7 +403,7 @@
 					"response": []
 				},
 				{
-					"name": "3.1 Phone verification start - SMS",
+					"name": "4.1 Phone verification start - SMS",
 					"request": {
 						"method": "POST",
 						"header": [],
@@ -427,7 +431,7 @@
 					"response": []
 				},
 				{
-					"name": "3.2. Phone verification resend - SMS",
+					"name": "4.2 Phone verification resend - SMS",
 					"request": {
 						"method": "POST",
 						"header": [],
@@ -455,7 +459,7 @@
 					"response": []
 				},
 				{
-					"name": "3.3 Phone verification resend - Voice",
+					"name": "4.3 Phone verification resend - Voice",
 					"request": {
 						"method": "POST",
 						"header": [],
@@ -483,7 +487,7 @@
 					"response": []
 				},
 				{
-					"name": "3.4 Validate Verify token for phone",
+					"name": "4.4 Validate Verify token for phone",
 					"request": {
 						"method": "POST",
 						"header": [],
@@ -512,7 +516,7 @@
 					"response": []
 				}
 			],
-			"description": "Endpoints for the local app"
+			"description": "Endpoints for the local app.\n\nThe number prefixed in each request denotes the number of the \"Build\" subsection from the [RUNBOOK.md](https://github.com/kaustavdm/forge-access-granted/blob/main/RUNBOOK.md)."
 		}
 	],
 	"auth": {
