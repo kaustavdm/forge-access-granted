@@ -15,6 +15,16 @@
         <input type="tel" id="phone" required placeholder="+1234567890" />
         <button type="submit">Send OTP</button>
         <div class="error" id="phone-error"></div>
+        <a href="#" id="passkey-login" class="passkey-link">Sign in with Passkey</a>
+      </form>
+
+      <!-- Passkey Authentication -->
+      <form id="passkey-auth" class="step" style="display: none">
+        <h2>Sign in with Passkey</h2>
+        <input type="tel" id="passkey-phone" required placeholder="+1234567890" />
+        <button type="submit">Authenticate</button>
+        <div class="error" id="passkey-auth-error"></div>
+        <a href="#" id="back-to-phone" class="skip-link">Back to phone verification</a>
       </form>
 
       <!-- Step 2: Phone OTP -->
@@ -64,7 +74,16 @@
         <div class="error" id="email-otp-error"></div>
       </form>
 
-      <!-- Step 6: Final Dashboard -->
+      <!-- Step 6: Register Passkey -->
+      <form id="passkey-register" class="step" style="display: none">
+        <h2>Set up a Passkey</h2>
+        <p>Use biometrics for faster sign-in next time.</p>
+        <button type="submit">Register Passkey</button>
+        <div class="error" id="passkey-register-error"></div>
+        <a href="#" id="skip-passkey" class="skip-link">Skip for now</a>
+      </form>
+
+      <!-- Step 7: Final Dashboard -->
       <div id="dashboard" class="step" style="display: none">
         <h2>Congratulations!</h2>
         <p>You have completed onboarding!</p>
