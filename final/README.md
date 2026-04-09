@@ -6,6 +6,7 @@ This directory contains the complete, working implementation of the "Twilio Forg
 
 - `lookup.js` - Complete implementation of Twilio Lookup API routes
 - `verify.js` - Complete implementation of Twilio Verify API routes
+- `passkeys.js` - Complete implementation of Twilio Verify Passkeys routes
 - `server.js` - Configured Express.js server
 - `/public/` - UI for testing the implementation
 
@@ -31,4 +32,7 @@ This directory contains the complete, working implementation of the "Twilio Forg
 
 ## Workshop Instructions
 
-For detailed workshop instructions, refer to the [RUNBOOK.md](../RUNBOOK.md) in the root directory.
+For detailed workshop instructions, refer to the runbooks in the root directory:
+
+- [RUNBOOK.md](../RUNBOOK.md) - Main workshop: phone lookup, SMS/Voice/Email verification
+- [RUNBOOK_PASSKEYS.md](../RUNBOOK_PASSKEYS.md) - Passkeys extension: passwordless authentication with WebAuthn
