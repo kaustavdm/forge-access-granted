@@ -30,6 +30,10 @@ const OnboardingFlow = (() => {
     resendPhoneOtp: "#resend-phone-otp",
     callPhoneOtp: "#call-phone-otp",
 
+    // Skip links
+    skipPhone: "#skip-phone",
+    skipEmail: "#skip-email",
+
     // Passkey containers
     passkeyRegister: "#passkey-register",
     passkeyAuth: "#passkey-auth",
@@ -417,7 +421,7 @@ const OnboardingFlow = (() => {
 
         // Step 2: Create credential using browser WebAuthn API
         const creationOptions =
-          PublicKeyCredential.parseCreationOptionsFromJSON(data.options);
+          PublicKeyCredential.parseCreationOptionsFromJSON(data.options.publicKey);
         const credential = await navigator.credentials.create({
           publicKey: creationOptions,
         });
@@ -450,6 +454,16 @@ const OnboardingFlow = (() => {
       } finally {
         utils.toggleButton(button, false);
       }
+    },
+
+    handleSkipPhone(e) {
+      e.preventDefault();
+      stepManager.show(utils.$(selectors.emailForm));
+    },
+
+    handleSkipEmail(e) {
+      e.preventDefault();
+      stepManager.show(utils.$(selectors.passkeyRegister));
     },
 
     /**
@@ -507,7 +521,7 @@ const OnboardingFlow = (() => {
 
         // Step 2: Sign challenge using browser WebAuthn API
         const requestOptions =
-          PublicKeyCredential.parseRequestOptionsFromJSON(data.options);
+          PublicKeyCredential.parseRequestOptionsFromJSON(data.options.publicKey);
         const assertion = await navigator.credentials.get({
           publicKey: requestOptions,
         });
@@ -632,6 +646,9 @@ const OnboardingFlow = (() => {
     utils.$(selectors.verifyEmailBtn).onclick = handlers.handleVerifyEmailClick;
     utils.$(selectors.emailForm).onsubmit = handlers.handleEmailSubmit;
     utils.$(selectors.emailOtpForm).onsubmit = handlers.handleEmailOtpSubmit;
+
+    utils.$(selectors.skipPhone).onclick = handlers.handleSkipPhone;
+    utils.$(selectors.skipEmail).onclick = handlers.handleSkipEmail;
 
     // Passkey event handlers
     utils.$(selectors.passkeyRegister).onsubmit =
