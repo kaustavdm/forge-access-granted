@@ -261,7 +261,7 @@ const OnboardingFlow = (() => {
     async runPasskeyAuth(errorEl) {
       const data = await api.passkeyAuthenticate();
 
-      if (data.error) {
+      if (data.error || !data.options) {
         utils.showError(errorEl, data.error || "Failed to start authentication.");
         return false;
       }
@@ -474,7 +474,7 @@ const OnboardingFlow = (() => {
           state.userEmail || state.userPhone || "My Passkey";
         const data = await api.passkeyRegister(friendlyName);
 
-        if (data.error) {
+        if (data.error || !data.options) {
           return utils.showError(
             errorEl,
             data.error || "Failed to start passkey registration.",
