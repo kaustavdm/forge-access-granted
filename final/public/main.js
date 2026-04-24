@@ -252,8 +252,7 @@ const OnboardingFlow = (() => {
 
   function getChecklistStatus(verified, skipped) {
     if (verified) return "done";
-    if (skipped) return "skipped";
-    return "skipped";
+    return "skipped"; // covers both skipped and not-attempted
   }
 
   function setChecklistItem(selector, status) {
@@ -639,6 +638,15 @@ const OnboardingFlow = (() => {
       e.preventDefault();
       utils.stopResendTimer();
       verificationStorage.clear();
+      utils.$(selectors.phoneInput).value = "";
+      utils.$(selectors.phoneOtpInput).value = "";
+      utils.$(selectors.emailInput).value = "";
+      utils.$(selectors.emailOtpInput).value = "";
+      utils.clearError(utils.$(selectors.phoneError));
+      utils.clearError(utils.$(selectors.phoneOtpError));
+      utils.clearError(utils.$(selectors.emailError));
+      utils.clearError(utils.$(selectors.emailOtpError));
+      utils.clearError(utils.$(selectors.passkeyRegisterError));
       state.phoneVerified = false;
       state.phoneSkipped = false;
       state.emailVerified = false;
