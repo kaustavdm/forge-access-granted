@@ -308,6 +308,20 @@ const OnboardingFlow = (() => {
       if (!state.passkeyRegistered && !state.passkeyAuthUsed) {
         utils.$(selectors.setupPasskeyBtn).style.display = "";
       }
+      setChecklistItem(
+        selectors.checklistPhone,
+        getChecklistStatus(state.phoneVerified, state.phoneSkipped),
+      );
+      setChecklistItem(
+        selectors.checklistEmail,
+        getChecklistStatus(state.emailVerified, state.emailSkipped),
+      );
+      const passkeyStatus = (state.passkeyRegistered || state.passkeyAuthUsed)
+        ? "done"
+        : state.passkeyFailed
+          ? "failed"
+          : "skipped";
+      setChecklistItem(selectors.checklistPasskey, passkeyStatus);
     },
 
     showPasskeyRegister() {
@@ -427,7 +441,8 @@ const OnboardingFlow = (() => {
         const data = await api.validatePhoneOtp(state.userPhone, code);
 
         if (data.valid) {
-          // Phone verified successfully, show intermediate dashboard
+          state.phoneVerified = true;
+          verificationStorage.save("phoneVerified");
           stepManager.show(utils.$(selectors.phoneVerifiedDashboard));
         } else {
           utils.showError(otpError, data.error || "Invalid code.");
@@ -511,7 +526,8 @@ const OnboardingFlow = (() => {
         const data = await api.validateEmailOtp(state.userEmail, code);
 
         if (data.valid) {
-          // Email verified successfully, offer passkey registration
+          state.emailVerified = true;
+          verificationStorage.save("emailVerified");
           stepManager.showPasskeyRegister();
         } else {
           utils.showError(otpError, data.error || "Invalid code.");
@@ -565,6 +581,7 @@ const OnboardingFlow = (() => {
 
         if (verifyData.success) {
           state.passkeyRegistered = true;
+          verificationStorage.save("passkeyRegistered");
           stepManager.showDashboard();
         } else {
           utils.showError(
@@ -618,16 +635,31 @@ const OnboardingFlow = (() => {
 
     handleLogout(e) {
       e.preventDefault();
-      window.location.reload();
+      verificationStorage.clear();
+      state.phoneVerified = false;
+      state.phoneSkipped = false;
+      state.emailVerified = false;
+      state.emailSkipped = false;
+      state.passkeyFailed = false;
+      state.passkeyRegistered = false;
+      state.passkeyAuthUsed = false;
+      state.passkeyFriendlyName = null;
+      state.userPhone = "";
+      state.userEmail = "";
+      stepManager.show(utils.$(selectors.phoneForm));
     },
 
     handleSkipPhone(e) {
       e.preventDefault();
+      state.phoneSkipped = true;
+      verificationStorage.save("phoneSkipped");
       stepManager.show(utils.$(selectors.emailForm));
     },
 
     handleSkipEmail(e) {
       e.preventDefault();
+      state.emailSkipped = true;
+      verificationStorage.save("emailSkipped");
       stepManager.showPasskeyRegister();
     },
 
@@ -637,6 +669,10 @@ const OnboardingFlow = (() => {
      */
     handleSkipPasskey(e) {
       e.preventDefault();
+      if (!state.passkeyRegistered) {
+        state.passkeyFailed = true;
+        verificationStorage.save("passkeyFailed");
+      }
       stepManager.showDashboard();
     },
 
@@ -741,8 +777,7 @@ const OnboardingFlow = (() => {
    * 2. Bind event handlers to forms
    */
   function init() {
-    // Step 1: Initialize the step management system
-    // This collects all form elements and prepares them for show/hide operations
+    verificationStorage.load();
     stepManager.init();
 
     // Step 2: Bind event handlers to each form and button
