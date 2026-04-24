@@ -9,7 +9,7 @@ let verifyServiceSid;
 let passkeysAuthHeader;
 let passkeysBaseUrl;
 
-// key: factor_sid → { friendly_name, identity, phone, email }
+// key: factor_sid → { friendly_name, identity, phone, email } (phone/email reserved for future use, currently null)
 const factorStore = new Map();
 
 const initialize = (client, serviceSid, apiCredentials) => {
@@ -111,6 +111,12 @@ router.post("/email/validate", async (req, res) => {
 });
 
 const twilioPasskeysPost = async (path, body) => {
+  if (!passkeysBaseUrl) {
+    const err = new Error("Passkeys not configured");
+    err.status = 503;
+    err.code = "PASSKEYS_NOT_CONFIGURED";
+    throw err;
+  }
   const res = await fetch(`${passkeysBaseUrl}${path}`, {
     method: "POST",
     headers: {
