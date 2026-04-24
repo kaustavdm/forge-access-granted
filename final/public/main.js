@@ -300,6 +300,8 @@ const OnboardingFlow = (() => {
 
     showDashboard() {
       this.show(utils.$(selectors.dashboard));
+      utils.$(selectors.dashboardPasskeyGreeting).style.display = "none";
+      utils.$(selectors.setupPasskeyBtn).style.display = "none";
       if (state.passkeyAuthUsed && state.passkeyFriendlyName) {
         utils.$(selectors.dashboardPasskeyGreeting).style.display = "";
         utils.$(selectors.passkeyFriendlyNameEl).textContent =
@@ -635,6 +637,7 @@ const OnboardingFlow = (() => {
 
     handleLogout(e) {
       e.preventDefault();
+      utils.stopResendTimer();
       verificationStorage.clear();
       state.phoneVerified = false;
       state.phoneSkipped = false;
