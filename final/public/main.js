@@ -689,6 +689,11 @@ const OnboardingFlow = (() => {
       handlers.handleRegisterPasskey;
     utils.$(selectors.skipPasskey).onclick = handlers.handleSkipPasskey;
     utils.$(selectors.passkeyLogin).onclick = handlers.handlePasskeyLogin;
+    utils.$(selectors.passkeySigninBtn).onclick =
+      handlers.handlePasskeySignInFromRegister;
+    utils.$(selectors.passkeyCreateNew).onclick =
+      handlers.handleCreateNewPasskey;
+    utils.$(selectors.setupPasskeyBtn).onclick = handlers.handleSetupPasskey;
 
     // Application is now ready for user interaction
     console.log("Onboarding flow initialized successfully");
