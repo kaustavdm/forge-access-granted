@@ -220,7 +220,6 @@ const OnboardingFlow = (() => {
         utils.$(selectors.emailForm),
         utils.$(selectors.emailOtpForm),
         utils.$(selectors.passkeyRegister),
-        utils.$(selectors.passkeyAuth),
         utils.$(selectors.dashboard),
       ];
     },
@@ -230,12 +229,66 @@ const OnboardingFlow = (() => {
       this.allSteps.forEach((el) => (el.style.display = "none"));
       step.style.display = "";
     },
+
+    showDashboard() {
+      this.show(utils.$(selectors.dashboard));
+      if (state.passkeyAuthUsed && state.passkeyFriendlyName) {
+        utils.$(selectors.dashboardPasskeyGreeting).style.display = "";
+        utils.$(selectors.passkeyFriendlyNameEl).textContent =
+          state.passkeyFriendlyName;
+      }
+      if (!state.passkeyRegistered && !state.passkeyAuthUsed) {
+        utils.$(selectors.setupPasskeyBtn).style.display = "";
+      }
+    },
+
+    showPasskeyRegister() {
+      this.show(utils.$(selectors.passkeyRegister));
+      if (state.passkeyRegistered) {
+        utils.$(selectors.passkeyRegisterNew).style.display = "none";
+        utils.$(selectors.passkeyRegisterExisting).style.display = "";
+      } else {
+        utils.$(selectors.passkeyRegisterNew).style.display = "";
+        utils.$(selectors.passkeyRegisterExisting).style.display = "none";
+      }
+    },
   };
 
   /* ===== FORM EVENT HANDLERS ===== */
 
   // Each handler manages one step of the onboarding flow
   const handlers = {
+    async runPasskeyAuth(errorEl) {
+      const data = await api.passkeyAuthenticate();
+
+      if (data.error) {
+        utils.showError(errorEl, data.error || "Failed to start authentication.");
+        return false;
+      }
+
+      const requestOptions =
+        PublicKeyCredential.parseRequestOptionsFromJSON(data.options.publicKey);
+      const assertion = await navigator.credentials.get({
+        publicKey: requestOptions,
+      });
+
+      if (!assertion) {
+        utils.showError(errorEl, "Passkey authentication was cancelled.");
+        return false;
+      }
+
+      const verifyData = await api.passkeyAuthenticateVerify(assertion.toJSON());
+
+      if (verifyData.success) {
+        state.passkeyFriendlyName = verifyData.friendly_name || null;
+        state.passkeyAuthUsed = true;
+        return true;
+      }
+
+      utils.showError(errorEl, "Authentication failed. Please try again.");
+      return false;
+    },
+
     /**
      * STEP 1: Phone Number Submission
      * Validates phone number and sends SMS verification code
@@ -391,7 +444,7 @@ const OnboardingFlow = (() => {
 
         if (data.valid) {
           // Email verified successfully, offer passkey registration
-          stepManager.show(utils.$(selectors.passkeyRegister));
+          stepManager.showPasskeyRegister();
         } else {
           utils.showError(otpError, data.error || "Invalid code.");
         }
@@ -411,14 +464,15 @@ const OnboardingFlow = (() => {
       e.preventDefault();
 
       const errorEl = utils.$(selectors.passkeyRegisterError);
-      const button = e.target.querySelector("button");
+      const button = e.target.querySelector("button[type='submit']");
 
       utils.clearError(errorEl);
       utils.toggleButton(button, true);
 
       try {
-        // Step 1: Request passkey creation options from server
-        const data = await api.passkeyRegister(state.userPhone);
+        const friendlyName =
+          state.userEmail || state.userPhone || "My Passkey";
+        const data = await api.passkeyRegister(friendlyName);
 
         if (data.error) {
           return utils.showError(
@@ -427,7 +481,6 @@ const OnboardingFlow = (() => {
           );
         }
 
-        // Step 2: Create credential using browser WebAuthn API
         const creationOptions =
           PublicKeyCredential.parseCreationOptionsFromJSON(data.options.publicKey);
         const credential = await navigator.credentials.create({
@@ -435,18 +488,15 @@ const OnboardingFlow = (() => {
         });
 
         if (!credential) {
-          return utils.showError(
-            errorEl,
-            "Passkey registration was cancelled.",
-          );
+          return utils.showError(errorEl, "Passkey registration was cancelled.");
         }
 
-        // Step 3: Send credential to server for verification
         const credentialJSON = credential.toJSON();
         const verifyData = await api.passkeyRegisterVerify(credentialJSON);
 
         if (verifyData.success) {
-          stepManager.show(utils.$(selectors.dashboard));
+          state.passkeyRegistered = true;
+          stepManager.showDashboard();
         } else {
           utils.showError(
             errorEl,
@@ -464,92 +514,16 @@ const OnboardingFlow = (() => {
       }
     },
 
-    handleSkipPhone(e) {
+    async handlePasskeySignInFromRegister(e) {
       e.preventDefault();
-      stepManager.show(utils.$(selectors.emailForm));
-    },
-
-    handleSkipEmail(e) {
-      e.preventDefault();
-      stepManager.show(utils.$(selectors.passkeyRegister));
-    },
-
-    /**
-     * Skip Passkey Registration
-     * Proceeds to the final dashboard without registering a passkey
-     */
-    handleSkipPasskey(e) {
-      e.preventDefault();
-      stepManager.show(utils.$(selectors.dashboard));
-    },
-
-    /**
-     * Show Passkey Login
-     * Shows the passkey authentication form
-     */
-    handlePasskeyLogin(e) {
-      e.preventDefault();
-      stepManager.show(utils.$(selectors.passkeyAuth));
-    },
-
-    /**
-     * Back to Phone Form
-     * Returns to the phone number input form
-     */
-    handleBackToPhone(e) {
-      e.preventDefault();
-      stepManager.show(utils.$(selectors.phoneForm));
-    },
-
-    /**
-     * Passkey Authentication
-     * Authenticates user with a registered passkey
-     */
-    async handlePasskeyAuth(e) {
-      e.preventDefault();
-
-      const phoneInput = utils.$(selectors.passkeyPhone);
-      const errorEl = utils.$(selectors.passkeyAuthError);
-      const button = e.target.querySelector("button");
-
+      const errorEl = utils.$(selectors.passkeyRegisterError);
+      const button = e.target;
       utils.clearError(errorEl);
-      const phone = phoneInput.value.trim();
       utils.toggleButton(button, true);
-
       try {
-        // Step 1: Request authentication challenge from server
-        const data = await api.passkeyAuthenticate(phone);
-
-        if (data.error) {
-          return utils.showError(
-            errorEl,
-            data.error || "Failed to start authentication.",
-          );
-        }
-
-        // Step 2: Sign challenge using browser WebAuthn API
-        const requestOptions =
-          PublicKeyCredential.parseRequestOptionsFromJSON(data.options.publicKey);
-        const assertion = await navigator.credentials.get({
-          publicKey: requestOptions,
-        });
-
-        if (!assertion) {
-          return utils.showError(
-            errorEl,
-            "Passkey authentication was cancelled.",
-          );
-        }
-
-        // Step 3: Send assertion to server for verification
-        const assertionJSON = assertion.toJSON();
-        const verifyData = await api.passkeyAuthenticateVerify(assertionJSON);
-
-        if (verifyData.success) {
-          state.userPhone = phone;
-          stepManager.show(utils.$(selectors.dashboard));
-        } else {
-          utils.showError(errorEl, "Authentication failed. Please try again.");
+        const success = await handlers.runPasskeyAuth(errorEl);
+        if (success) {
+          stepManager.showDashboard();
         }
       } catch (err) {
         if (err.name === "NotAllowedError") {
@@ -559,6 +533,58 @@ const OnboardingFlow = (() => {
         }
       } finally {
         utils.toggleButton(button, false);
+      }
+    },
+
+    handleCreateNewPasskey(e) {
+      e.preventDefault();
+      utils.$(selectors.passkeyRegisterExisting).style.display = "none";
+      utils.$(selectors.passkeyRegisterNew).style.display = "";
+    },
+
+    handleSetupPasskey(e) {
+      e.preventDefault();
+      stepManager.showPasskeyRegister();
+    },
+
+    handleSkipPhone(e) {
+      e.preventDefault();
+      stepManager.show(utils.$(selectors.emailForm));
+    },
+
+    handleSkipEmail(e) {
+      e.preventDefault();
+      stepManager.showPasskeyRegister();
+    },
+
+    /**
+     * Skip Passkey Registration
+     * Proceeds to the final dashboard without registering a passkey
+     */
+    handleSkipPasskey(e) {
+      e.preventDefault();
+      stepManager.showDashboard();
+    },
+
+    async handlePasskeyLogin(e) {
+      e.preventDefault();
+      const errorEl = utils.$(selectors.phoneError);
+      const link = e.target;
+      link.style.pointerEvents = "none";
+      utils.clearError(errorEl);
+      try {
+        const success = await handlers.runPasskeyAuth(errorEl);
+        if (success) {
+          stepManager.showDashboard();
+        }
+      } catch (err) {
+        if (err.name === "NotAllowedError") {
+          utils.showError(errorEl, "Passkey authentication was cancelled.");
+        } else {
+          utils.showError(errorEl, "Failed to authenticate with passkey.");
+        }
+      } finally {
+        link.style.pointerEvents = "";
       }
     },
 
@@ -663,8 +689,6 @@ const OnboardingFlow = (() => {
       handlers.handleRegisterPasskey;
     utils.$(selectors.skipPasskey).onclick = handlers.handleSkipPasskey;
     utils.$(selectors.passkeyLogin).onclick = handlers.handlePasskeyLogin;
-    utils.$(selectors.backToPhone).onclick = handlers.handleBackToPhone;
-    utils.$(selectors.passkeyAuth).onsubmit = handlers.handlePasskeyAuth;
 
     // Application is now ready for user interaction
     console.log("Onboarding flow initialized successfully");
