@@ -112,3 +112,18 @@ button:disabled {
   color: #0969da;
   text-decoration: underline;
 }
+
+#verification-checklist {
+  list-style: none;
+  padding: 0;
+  margin: 12px 0;
+  text-align: left;
+}
+
+#verification-checklist li {
+  margin: 4px 0;
+}
+
+.status-done .checklist-icon    { color: #22a022; font-weight: bold; }
+.status-skipped .checklist-icon { color: #888; }
+.status-failed .checklist-icon  { color: #cc2200; font-weight: bold; }
