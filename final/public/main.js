@@ -36,13 +36,19 @@ const OnboardingFlow = (() => {
 
     // Passkey containers
     passkeyRegister: "#passkey-register",
-    passkeyAuth: "#passkey-auth",
+    passkeyRegisterNew: "#passkey-register-new",
+    passkeyRegisterExisting: "#passkey-register-existing",
 
     // Passkey elements
     skipPasskey: "#skip-passkey",
     passkeyLogin: "#passkey-login",
-    passkeyPhone: "#passkey-phone",
-    backToPhone: "#back-to-phone",
+    passkeySigninBtn: "#passkey-signin-btn",
+    passkeyCreateNew: "#passkey-create-new",
+
+    // Dashboard passkey elements
+    dashboardPasskeyGreeting: "#dashboard-passkey-greeting",
+    passkeyFriendlyNameEl: "#passkey-friendly-name",
+    setupPasskeyBtn: "#setup-passkey-btn",
 
     // Error display elements
     emailError: "#email-error",
@@ -50,7 +56,6 @@ const OnboardingFlow = (() => {
     phoneError: "#phone-error",
     phoneOtpError: "#phone-otp-error",
     passkeyRegisterError: "#passkey-register-error",
-    passkeyAuthError: "#passkey-auth-error",
   };
 
   /* ===== APPLICATION STATE ===== */
@@ -61,6 +66,9 @@ const OnboardingFlow = (() => {
     userPhone: "", // Phone number (saved after successful verification)
     resendTimer: null, // Timer for resend OTP countdown
     resendCountdown: 0, // Current countdown value in seconds
+    passkeyRegistered: false,
+    passkeyFriendlyName: null,
+    passkeyAuthUsed: false,
   };
 
   /* ===== UTILITY FUNCTIONS ===== */
@@ -173,12 +181,12 @@ const OnboardingFlow = (() => {
       api.post("/api/verify/phone/validate", { phone, code }),
 
     // Passkey APIs
-    passkeyRegister: (phone) =>
-      api.post("/api/passkeys/register", { phone }),
+    passkeyRegister: (friendlyName) =>
+      api.post("/api/passkeys/register", { friendly_name: friendlyName }),
     passkeyRegisterVerify: (credential) =>
       api.post("/api/passkeys/register/verify", credential),
-    passkeyAuthenticate: (phone) =>
-      api.post("/api/passkeys/authenticate", { phone }),
+    passkeyAuthenticate: () =>
+      api.post("/api/passkeys/authenticate", {}),
     passkeyAuthenticateVerify: (assertion) =>
       api.post("/api/passkeys/authenticate/verify", assertion),
 
