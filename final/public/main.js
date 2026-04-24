@@ -52,6 +52,11 @@ const OnboardingFlow = (() => {
     setupPasskeyBtn: "#setup-passkey-btn",
     logoutLink: "#logout-link",
 
+    // Checklist elements
+    checklistPhone: "#checklist-phone",
+    checklistEmail: "#checklist-email",
+    checklistPasskey: "#checklist-passkey",
+
     // Error display elements
     emailError: "#email-error",
     emailOtpError: "#email-otp-error",
@@ -71,6 +76,11 @@ const OnboardingFlow = (() => {
     passkeyRegistered: false,
     passkeyFriendlyName: null,
     passkeyAuthUsed: false,
+    phoneVerified: false,
+    phoneSkipped: false,
+    emailVerified: false,
+    emailSkipped: false,
+    passkeyFailed: false,
   };
 
   /* ===== UTILITY FUNCTIONS ===== */
@@ -206,6 +216,57 @@ const OnboardingFlow = (() => {
     lookupPhoneMultiple: (phone) =>
       api.get(`/api/lookup/${encodeURIComponent(phone)}/multiple`),
   };
+
+  /* ===== VERIFICATION STORAGE ===== */
+
+  const STORAGE_KEY_MAP = {
+    phoneVerified:     "forge_phone_verified",
+    phoneSkipped:      "forge_phone_skipped",
+    emailVerified:     "forge_email_verified",
+    emailSkipped:      "forge_email_skipped",
+    passkeyRegistered: "forge_passkey_registered",
+    passkeyFailed:     "forge_passkey_failed",
+  };
+
+  const verificationStorage = {
+    load() {
+      Object.entries(STORAGE_KEY_MAP).forEach(([stateKey, storageKey]) => {
+        const val = localStorage.getItem(storageKey);
+        if (val !== null) state[stateKey] = val === "true";
+      });
+    },
+
+    save(stateKey) {
+      localStorage.setItem(STORAGE_KEY_MAP[stateKey], String(state[stateKey]));
+    },
+
+    clear() {
+      Object.values(STORAGE_KEY_MAP).forEach((k) => localStorage.removeItem(k));
+    },
+  };
+
+  function getChecklistStatus(verified, skipped) {
+    if (verified) return "done";
+    if (skipped) return "skipped";
+    return "skipped";
+  }
+
+  function setChecklistItem(selector, status) {
+    const el = utils.$(selector);
+    // Capture the text label from the existing text node BEFORE mutating iconEl
+    const iconEl = el.querySelector(".checklist-icon");
+    const labelText = Array.from(el.childNodes)
+      .filter((n) => n.nodeType === Node.TEXT_NODE)
+      .map((n) => n.textContent.trim())
+      .filter(Boolean)
+      .join(" ");
+    el.classList.remove("status-done", "status-skipped", "status-failed");
+    el.classList.add(`status-${status}`);
+    const icons = { done: "✓", skipped: "–", failed: "✗" };
+    iconEl.textContent = icons[status];
+    iconEl.setAttribute("aria-hidden", "true");
+    el.setAttribute("aria-label", `${labelText}: ${status}`);
+  }
 
   /* ===== STEP MANAGEMENT ===== */
 
