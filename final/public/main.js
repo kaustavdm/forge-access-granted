@@ -49,6 +49,7 @@ const OnboardingFlow = (() => {
     dashboardPasskeyGreeting: "#dashboard-passkey-greeting",
     passkeyFriendlyNameEl: "#passkey-friendly-name",
     setupPasskeyBtn: "#setup-passkey-btn",
+    logoutLink: "#logout-link",
 
     // Error display elements
     emailError: "#email-error",
@@ -547,6 +548,11 @@ const OnboardingFlow = (() => {
       stepManager.showPasskeyRegister();
     },
 
+    handleLogout(e) {
+      e.preventDefault();
+      window.location.reload();
+    },
+
     handleSkipPhone(e) {
       e.preventDefault();
       stepManager.show(utils.$(selectors.emailForm));
@@ -694,6 +700,7 @@ const OnboardingFlow = (() => {
     utils.$(selectors.passkeyCreateNew).onclick =
       handlers.handleCreateNewPasskey;
     utils.$(selectors.setupPasskeyBtn).onclick = handlers.handleSetupPasskey;
+    utils.$(selectors.logoutLink).onclick = handlers.handleLogout;
 
     // Application is now ready for user interaction
     console.log("Onboarding flow initialized successfully");
