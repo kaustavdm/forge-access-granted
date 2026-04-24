@@ -9,7 +9,6 @@ dotenv.config();
 // Import route modules
 const lookupRoutes = require("./lookup");
 const verifyRoutes = require("./verify");
-const passkeysRoutes = require("./passkeys");
 
 // Environment validation
 const requiredEnvVars = [
@@ -56,18 +55,14 @@ app.use(express.static(path.join(__dirname, "public")));
 
 // Initialize and mount API routes
 lookupRoutes.initialize(twilioClient);
-verifyRoutes.initialize(twilioClient, process.env.TWILIO_VERIFY_SERVICE_SID);
-passkeysRoutes.initialize(
-  {
-    apiKeySid: process.env.TWILIO_API_KEY_SID,
-    apiKeySecret: process.env.TWILIO_API_KEY_SECRET,
-  },
-  process.env.TWILIO_VERIFY_SERVICE_SID,
-);
+verifyRoutes.initialize(twilioClient, process.env.TWILIO_VERIFY_SERVICE_SID, {
+  apiKeySid: process.env.TWILIO_API_KEY_SID,
+  apiKeySecret: process.env.TWILIO_API_KEY_SECRET,
+});
 
 app.use("/api/lookup", lookupRoutes.router);
 app.use("/api/verify", verifyRoutes.router);
-app.use("/api/passkeys", passkeysRoutes.router);
+app.use("/api/passkeys", verifyRoutes.passkeysRouter);
 
 // Health check endpoint
 app.get("/health", (req, res) => {
@@ -102,6 +97,11 @@ const server = app.listen(PORT, HOST, () => {
   console.log(`Server running on http://${HOST}:${PORT}`);
   console.log(`Running: final`);
   console.log(`Environment: ${process.env.NODE_ENV || "development"}`);
+});
+
+server.on("error", (err) => {
+  console.error(`Failed to start server: ${err.message}`);
+  process.exit(1);
 });
 
 // Graceful shutdown
