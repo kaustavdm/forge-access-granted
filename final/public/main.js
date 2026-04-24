@@ -42,6 +42,7 @@ const OnboardingFlow = (() => {
     // Passkey elements
     skipPasskey: "#skip-passkey",
     passkeyLogin: "#passkey-login",
+    passkeyFriendlyNameInput: "#passkey-friendly-name-input",
     passkeySigninBtn: "#passkey-signin-btn",
     passkeyCreateNew: "#passkey-create-new",
 
@@ -472,6 +473,7 @@ const OnboardingFlow = (() => {
 
       try {
         const friendlyName =
+          utils.$(selectors.passkeyFriendlyNameInput).value.trim() ||
           state.userEmail || state.userPhone || "My Passkey";
         const data = await api.passkeyRegister(friendlyName);
 
