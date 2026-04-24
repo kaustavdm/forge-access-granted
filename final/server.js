@@ -57,7 +57,13 @@ app.use(express.static(path.join(__dirname, "public")));
 // Initialize and mount API routes
 lookupRoutes.initialize(twilioClient);
 verifyRoutes.initialize(twilioClient, process.env.TWILIO_VERIFY_SERVICE_SID);
-passkeysRoutes.initialize(twilioClient, process.env.TWILIO_VERIFY_SERVICE_SID);
+passkeysRoutes.initialize(
+  {
+    apiKeySid: process.env.TWILIO_API_KEY_SID,
+    apiKeySecret: process.env.TWILIO_API_KEY_SECRET,
+  },
+  process.env.TWILIO_VERIFY_SERVICE_SID,
+);
 
 app.use("/api/lookup", lookupRoutes.router);
 app.use("/api/verify", verifyRoutes.router);
