@@ -237,7 +237,12 @@ const OnboardingFlow = (() => {
     },
 
     save(stateKey) {
-      localStorage.setItem(STORAGE_KEY_MAP[stateKey], String(state[stateKey]));
+      const storageKey = STORAGE_KEY_MAP[stateKey];
+      if (!storageKey) {
+        console.warn(`verificationStorage.save: unknown stateKey "${stateKey}"`);
+        return;
+      }
+      localStorage.setItem(storageKey, String(state[stateKey]));
     },
 
     clear() {
