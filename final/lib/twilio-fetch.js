@@ -5,7 +5,7 @@ function buildAuthHeader(apiKeySid, apiKeySecret) {
   return `Basic ${encoded}`;
 }
 
-function createTwilioFetch(accountSid, apiKeySid, apiKeySecret) {
+function createTwilioFetch(apiKeySid, apiKeySecret) {
   const authorization = buildAuthHeader(apiKeySid, apiKeySecret);
 
   return function twilioFetch(url, options = {}) {

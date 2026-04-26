@@ -1,3 +1,5 @@
+"use strict";
+
 const dotenv = require("dotenv");
 const path = require("path");
 const express = require("express");
@@ -24,7 +26,6 @@ if (missingVars.length > 0) {
 }
 
 const twilioFetch = createTwilioFetch(
-  process.env.TWILIO_ACCOUNT_SID,
   process.env.TWILIO_API_KEY_SID,
   process.env.TWILIO_API_KEY_SECRET,
 );
