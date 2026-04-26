@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Email Verification</title>
+    <link rel="stylesheet" href="/css/style.css" />
+  </head>
+
+  <body>
+    <div id="app" data-step="Step 2 of 3">
+      <form id="email-form">
+        <h2>Enter your email</h2>
+        <input type="email" id="email" placeholder="Email address" />
+        <button type="submit">Send OTP</button>
+        <div class="error" id="email-error"></div>
+        <a href="#" id="skip-email" class="skip-link">Skip step</a>
+      </form>
+
+      <form id="email-otp-form" style="display: none">
+        <h2>Enter the 6-digit code sent to your email</h2>
+        <input type="text" id="email-otp" maxlength="6" pattern="\d{6}" required placeholder="123456" />
+        <button type="submit">Verify</button>
+        <div class="error" id="email-otp-error"></div>
+        <a href="#" id="resend-email-otp" class="resend-link disabled">Resend OTP in 30 seconds</a>
+      </form>
+    </div>
+
+    <script src="/js/shared.js"></script>
+    <script src="/js/email.js"></script>
+  </body>
+</html>
