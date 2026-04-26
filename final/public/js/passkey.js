@@ -131,7 +131,7 @@
   function handleSkipPasskey(e) {
     e.preventDefault();
     if (!App.state.get("passkeyRegistered")) {
-      App.state.set("passkeyFailed", true);
+      App.state.set("passkeySkipped", true);
     }
     window.location.href = "dashboard.html";
   }
