@@ -1,7 +1,8 @@
 (function () {
   function getChecklistStatus(verified, skipped) {
     if (verified) return "done";
-    return "skipped";
+    if (skipped) return "skipped";
+    return "pending";
   }
 
   function setChecklistItem(id, status) {
@@ -12,6 +13,7 @@
     if (status === "done") icon.textContent = "✓";
     else if (status === "skipped") icon.textContent = "–";
     else if (status === "failed") icon.textContent = "✗";
+    else icon.textContent = "○";
     el.setAttribute("aria-label", id.replace("checklist-", "") + ": " + status);
   }
 
@@ -22,22 +24,22 @@
     greeting.style.display = "none";
     setupBtn.style.display = "none";
 
-    if (App.state.passkeyAuthUsed && App.state.passkeyFriendlyName) {
+    if (App.state.get("passkeyAuthUsed") && App.state.get("passkeyFriendlyName")) {
       greeting.style.display = "";
-      document.getElementById("passkey-friendly-name").textContent = App.state.passkeyFriendlyName;
+      document.getElementById("passkey-friendly-name").textContent = App.state.get("passkeyFriendlyName");
     }
 
-    if (!App.state.passkeyRegistered && !App.state.passkeyAuthUsed) {
+    if (!App.state.get("passkeyRegistered") && !App.state.get("passkeyAuthUsed")) {
       setupBtn.style.display = "";
     }
 
-    setChecklistItem("checklist-phone", getChecklistStatus(App.state.phoneVerified, App.state.phoneSkipped));
-    setChecklistItem("checklist-email", getChecklistStatus(App.state.emailVerified, App.state.emailSkipped));
+    setChecklistItem("checklist-phone", getChecklistStatus(App.state.get("phoneVerified"), App.state.get("phoneSkipped")));
+    setChecklistItem("checklist-email", getChecklistStatus(App.state.get("emailVerified"), App.state.get("emailSkipped")));
 
     var passkeyStatus;
-    if (App.state.passkeyRegistered || App.state.passkeyAuthUsed) {
+    if (App.state.get("passkeyRegistered") || App.state.get("passkeyAuthUsed")) {
       passkeyStatus = "done";
-    } else if (App.state.passkeyFailed) {
+    } else if (App.state.get("passkeyFailed")) {
       passkeyStatus = "failed";
     } else {
       passkeyStatus = "skipped";
@@ -59,6 +61,5 @@
   document.getElementById("start-over-link").onclick = handleStartOver;
   document.getElementById("setup-passkey-btn").onclick = handleSetupPasskey;
 
-  App.state.load();
   setupDashboard();
 })();

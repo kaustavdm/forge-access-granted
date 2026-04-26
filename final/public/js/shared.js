@@ -1,11 +1,15 @@
 (function () {
   var STORAGE_KEY_MAP = {
-    phoneVerified:     "forge_phone_verified",
-    phoneSkipped:      "forge_phone_skipped",
-    emailVerified:     "forge_email_verified",
-    emailSkipped:      "forge_email_skipped",
-    passkeyRegistered: "forge_passkey_registered",
-    passkeyFailed:     "forge_passkey_failed",
+    userPhone:           "forge_user_phone",
+    userEmail:           "forge_user_email",
+    phoneVerified:       "forge_phone_verified",
+    phoneSkipped:        "forge_phone_skipped",
+    emailVerified:       "forge_email_verified",
+    emailSkipped:        "forge_email_skipped",
+    passkeyRegistered:   "forge_passkey_registered",
+    passkeyFailed:       "forge_passkey_failed",
+    passkeyAuthUsed:     "forge_passkey_auth_used",
+    passkeyFriendlyName: "forge_passkey_friendly_name",
   };
 
   var DEFAULTS = {
@@ -36,54 +40,60 @@
     }).then(function (res) { return res.json(); });
   }
 
-  function loadState(state) {
-    Object.keys(STORAGE_KEY_MAP).forEach(function (stateKey) {
-      var val = localStorage.getItem(STORAGE_KEY_MAP[stateKey]);
-      if (val !== null) {
-        state[stateKey] = val === "true";
-      }
-    });
-  }
+  var STRING_KEYS = { userPhone: true, userEmail: true, passkeyFriendlyName: true };
+  var cache = {};
 
-  function saveState(state, stateKey) {
-    var storageKey = STORAGE_KEY_MAP[stateKey];
-    if (!storageKey) {
-      console.warn("App.state.save: unknown stateKey \"" + stateKey + "\"");
-      return;
-    }
-    localStorage.setItem(storageKey, String(state[stateKey]));
-  }
-
-  function clearState(state) {
-    Object.keys(STORAGE_KEY_MAP).forEach(function (stateKey) {
-      localStorage.removeItem(STORAGE_KEY_MAP[stateKey]);
-    });
-    Object.keys(DEFAULTS).forEach(function (key) {
-      state[key] = DEFAULTS[key];
+  function loadAll() {
+    Object.keys(STORAGE_KEY_MAP).forEach(function (key) {
+      var val = localStorage.getItem(STORAGE_KEY_MAP[key]);
+      cache[key] = val === null ? DEFAULTS[key] : (STRING_KEYS[key] ? val : val === "true");
     });
   }
 
   var state = {
-    userEmail:          "",
-    userPhone:          "",
-    phoneVerified:      false,
-    phoneSkipped:       false,
-    emailVerified:      false,
-    emailSkipped:       false,
-    passkeyRegistered:  false,
-    passkeyFailed:      false,
-    passkeyAuthUsed:    false,
-    passkeyFriendlyName: null,
-
-    load:  function () { loadState(state); },
-    save:  function (stateKey) { saveState(state, stateKey); },
-    clear: function () { clearState(state); },
+    get: function (key) {
+      return cache.hasOwnProperty(key) ? cache[key] : DEFAULTS[key];
+    },
+    set: function (key, val) {
+      cache[key] = val;
+      var storageKey = STORAGE_KEY_MAP[key];
+      if (!storageKey) return;
+      if (val === null || val === undefined || val === "") {
+        localStorage.removeItem(storageKey);
+      } else {
+        localStorage.setItem(storageKey, String(val));
+      }
+    },
+    unset: function (key) {
+      cache[key] = DEFAULTS[key];
+      var storageKey = STORAGE_KEY_MAP[key];
+      if (storageKey) localStorage.removeItem(storageKey);
+    },
+    clear: function () {
+      Object.keys(STORAGE_KEY_MAP).forEach(function (key) {
+        localStorage.removeItem(STORAGE_KEY_MAP[key]);
+      });
+      Object.keys(DEFAULTS).forEach(function (key) {
+        cache[key] = DEFAULTS[key];
+      });
+    },
   };
+
+  loadAll();
+
+  function clearError(el) { el.textContent = ""; }
+  function showError(el, msg) { el.textContent = msg; }
+  function toggleButton(btn, disabled) { btn.disabled = disabled; }
 
   window.App = {
     api: {
       post: postJSON,
       get:  getJSON,
+    },
+    ui: {
+      clearError: clearError,
+      showError:  showError,
+      toggleButton: toggleButton,
     },
     state: state,
   };
