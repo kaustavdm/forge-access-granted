@@ -1,146 +1,114 @@
-/**
- * Routes for Twilio Lookup API
- *
- * See: https://www.twilio.com/docs/lookup/v2-api
- */
+"use strict";
 
 const express = require("express");
+const { errorRes } = require("./lib/errors");
 
 const router = express.Router();
-let twilioClient;
+const LOOKUP_BASE = "https://lookups.twilio.com/v2/PhoneNumbers";
 
-const initialize = (client) => {
-  twilioClient = client;
-};
+let twilioFetch;
 
-const errorRes = (status, message, code) => {
+function initialize(fetchFn) {
+  twilioFetch = fetchFn;
+}
+
+function buildUrl(phone, params) {
+  const url = new URL(`${LOOKUP_BASE}/${encodeURIComponent(phone)}`);
+  for (const [key, value] of Object.entries(params)) {
+    url.searchParams.set(key, value);
+  }
+  return url.toString();
+}
+
+function pickBaseFields(data) {
   return {
-    status: status || 500,
-    message: message || "An error occurred",
-    code: code || "UNKNOWN_ERROR",
+    valid: data.valid,
+    phone_number: data.phone_number,
+    national_format: data.national_format,
+    country_code: data.country_code,
+    calling_country_code: data.calling_country_code,
+    validation_errors: data.validation_errors,
   };
-};
+}
 
-// 1.1. Basic Lookup for phone number
 router.get("/:phone", async (req, res) => {
   try {
     const { phone } = req.params;
-    const { countryCode } = req.query;
-    const opts = {};
-
-    if (countryCode) {
-      opts.countryCode = req.query.countryCode;
+    const params = {};
+    if (req.query.countryCode) {
+      params.CountryCode = req.query.countryCode;
     }
-
-    const result = await twilioClient.lookups.v2
-      .phoneNumbers(phone)
-      .fetch(opts);
-
-    res.json({
-      valid: result.valid,
-      phoneNumber: result.phoneNumber,
-      nationalFormat: result.nationalFormat,
-      countryCode: result.countryCode,
-      callingCountryCode: result.callingCountryCode,
-      validationErrors: result.validationErrors,
-    });
+    const response = await twilioFetch(buildUrl(phone, params));
+    if (!response.ok) {
+      const err = await response.json();
+      return errorRes(res, response.status, err.message || "Lookup failed", err.code || "LOOKUP_ERROR");
+    }
+    const data = await response.json();
+    res.json(pickBaseFields(data));
   } catch (error) {
-    const err = errorRes(error.status, error.message, error.code);
-    res.status(err.status).json(err);
+    errorRes(res, 500, error.message, "LOOKUP_ERROR");
   }
 });
 
-// 1.2. Lookup with line type intelligence
 router.get("/:phone/line-type", async (req, res) => {
   try {
     const { phone } = req.params;
-    const opts = {
-      fields: ["line_type_intelligence"],
-    };
-
-    const result = await twilioClient.lookups.v2
-      .phoneNumbers(phone)
-      .fetch(opts);
-
-    const lineType = result.lineTypeIntelligence?.type;
-
+    const response = await twilioFetch(
+      buildUrl(phone, { Fields: "line_type_intelligence" })
+    );
+    if (!response.ok) {
+      const err = await response.json();
+      return errorRes(res, response.status, err.message || "Lookup failed", err.code || "LOOKUP_ERROR");
+    }
+    const data = await response.json();
+    const lineType = data.line_type_intelligence?.type;
     res.json({
-      valid: result.valid,
-      phoneNumber: result.phoneNumber,
-      nationalFormat: result.nationalFormat,
-      countryCode: result.countryCode,
-      callingCountryCode: result.callingCountryCode,
-      validationErrors: result.validationErrors,
-      // check for mobile
+      ...pickBaseFields(data),
       isMobile: lineType === "mobile",
-      // check for landline
       isLandline: lineType === "landline",
-      // send the entire line type intelligence object
-      // lineTypeIntelligence: result.lineTypeIntelligence,
     });
   } catch (error) {
-    const err = errorRes(error.status, error.message, error.code);
-    res.status(err.status).json(err);
+    errorRes(res, 500, error.message, "LOOKUP_ERROR");
   }
 });
 
-// 1.3. Lookup with line type intelligence
 router.get("/:phone/sms-pumping", async (req, res) => {
   try {
     const { phone } = req.params;
-    const opts = {
-      fields: ["sms_pumping_risk"],
-    };
-
-    const result = await twilioClient.lookups.v2
-      .phoneNumbers(phone)
-      .fetch(opts);
-
+    const response = await twilioFetch(
+      buildUrl(phone, { Fields: "sms_pumping_risk" })
+    );
+    if (!response.ok) {
+      const err = await response.json();
+      return errorRes(res, response.status, err.message || "Lookup failed", err.code || "LOOKUP_ERROR");
+    }
+    const data = await response.json();
     res.json({
-      valid: result.valid,
-      phoneNumber: result.phoneNumber,
-      nationalFormat: result.nationalFormat,
-      countryCode: result.countryCode,
-      callingCountryCode: result.callingCountryCode,
-      validationErrors: result.validationErrors,
-      smsPumpingRisk: result.smsPumpingRisk,
+      ...pickBaseFields(data),
+      sms_pumping_risk: data.sms_pumping_risk,
     });
   } catch (error) {
-    const err = errorRes(error.status, error.message, error.code);
-    res.status(err.status).json(err);
+    errorRes(res, 500, error.message, "LOOKUP_ERROR");
   }
 });
 
-// 1.4. Lookup with multiple packages
-// For list of all Lookup data packages, see https://www.twilio.com/docs/lookup/v2-api#data-packages
 router.get("/:phone/multiple", async (req, res) => {
   try {
     const { phone } = req.params;
-    const opts = {
-      fields: [
-        "line_type_intelligence", // Worldwide
-        "sms_pumping_risk", // Worldwide
-        // "sim_swap", // private beta
-        // "call_forwarding", // private beta
-        // "line_status", // private beta
-        // "identity_match", // Europe, LATAM, North America, Australia: https://www.twilio.com/docs/lookup/v2-api/identity-match
-        "caller_name", // US carrier numbers only
-        // "reassigned_number", // US only
-      ].join(),
-    };
-
-    const result = await twilioClient.lookups.v2
-      .phoneNumbers(phone)
-      .fetch(opts);
-
-    res.json(result);
+    const response = await twilioFetch(
+      buildUrl(phone, {
+        Fields: "line_type_intelligence,sms_pumping_risk,caller_name",
+      })
+    );
+    if (!response.ok) {
+      const err = await response.json();
+      return errorRes(res, response.status, err.message || "Lookup failed", err.code || "LOOKUP_ERROR");
+    }
+    const data = await response.json();
+    res.json(data);
   } catch (error) {
-    const err = errorRes(error.status, error.message, error.code);
-    res.status(err.status).json(err);
+    errorRes(res, 500, error.message, "LOOKUP_ERROR");
   }
 });
 
-module.exports = {
-  router,
-  initialize,
-};
+module.exports = { router, initialize };
