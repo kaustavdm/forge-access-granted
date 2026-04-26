@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="/css/style.css" />
+  <title>Set up a Passkey</title>
+</head>
+<body>
+  <div id="app">
+    <form id="passkey-register">
+      <h2>Set up a Passkey</h2>
+      <div id="passkey-register-new">
+        <p>Use biometrics for faster sign-in next time.</p>
+        <input type="text" id="passkey-friendly-name-input" placeholder="Passkey name (e.g. My MacBook)" />
+        <button type="submit">Register Passkey</button>
+      </div>
+      <div id="passkey-register-existing" style="display: none">
+        <p>You already have a passkey set up.</p>
+        <button type="button" id="passkey-signin-btn">Sign in with Passkey</button>
+        <a href="#" id="passkey-create-new" class="skip-link">Create new Passkey</a>
+      </div>
+      <div class="error" id="passkey-register-error"></div>
+      <a href="#" id="skip-passkey" class="skip-link">Skip for now</a>
+    </form>
+  </div>
+  <script src="/js/shared.js"></script>
+  <script src="/js/passkey.js"></script>
+</body>
+</html>

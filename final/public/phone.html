@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Phone Verification</title>
+    <link rel="stylesheet" href="/css/style.css" />
+  </head>
+
+  <body>
+    <div id="app">
+      <form id="phone-form">
+        <h2>Enter your phone number</h2>
+        <input type="tel" id="phone" required placeholder="+1234567890" />
+        <button type="submit">Send OTP</button>
+        <div class="error" id="phone-error"></div>
+        <a href="#" id="passkey-login" class="passkey-link">Sign in with Passkey</a>
+        <a href="#" id="skip-phone" class="skip-link">Skip step</a>
+      </form>
+
+      <form id="phone-otp-form" style="display: none">
+        <h2>Enter the 6-digit code sent to your phone</h2>
+        <input type="text" id="phone-otp" maxlength="6" pattern="\d{6}" required placeholder="123456" />
+        <button type="submit">Verify</button>
+        <div class="error" id="phone-otp-error"></div>
+        <a href="#" id="resend-phone-otp" class="resend-link disabled">Resend OTP in 30 seconds</a>
+        <a href="#" id="call-phone-otp" class="call-link" style="display: none">Call for OTP</a>
+      </form>
+    </div>
+
+    <script src="/js/shared.js"></script>
+    <script src="/js/phone.js"></script>
+  </body>
+</html>
