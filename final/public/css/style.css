@@ -1,0 +1,226 @@
+:root {
+  --color-primary: #0969da;
+  --color-error: #d73a49;
+  --color-text: #1f2328;
+  --color-muted: #8c959f;
+  --color-bg: #f6f8fa;
+  --color-card: #fff;
+  --color-border: #d0d7de;
+  --color-btn-disabled: #b6c6e3;
+  --color-done: #22a022;
+  --color-failed: #cc2200;
+  --color-checklist-muted: #888;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 12px;
+  --space-lg: 16px;
+  --space-xl: 24px;
+  --space-2xl: 32px;
+  --font-sm: 0.85em;
+  --font-base: 1em;
+  --font-md: 0.9em;
+  --font-label: 0.95em;
+  --font-heading: 1.3em;
+  --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.07);
+  --outline-focus: 2px solid var(--color-primary);
+  --outline-offset: 2px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+  background: var(--color-bg);
+  color: var(--color-text);
+  margin: 0;
+  padding: 0;
+}
+
+#app {
+  max-width: 350px;
+  margin: clamp(24px, 8vh, 60px) auto;
+  background: var(--color-card);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+  padding: var(--space-2xl) clamp(16px, 5vw, 24px);
+}
+
+h2 {
+  margin-top: 0;
+  font-size: var(--font-heading);
+}
+
+input[type="email"],
+input[type="tel"],
+input[type="text"] {
+  width: 100%;
+  padding: 10px;
+  margin: var(--space-md) 0 var(--space-lg) 0;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-base);
+}
+
+input[type="email"]:focus-visible,
+input[type="tel"]:focus-visible,
+input[type="text"]:focus-visible {
+  outline: var(--outline-focus);
+  outline-offset: var(--outline-offset);
+}
+
+button {
+  width: 100%;
+  padding: 10px;
+  background: var(--color-primary);
+  color: var(--color-card);
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: var(--font-base);
+  cursor: pointer;
+  margin-bottom: var(--space-sm);
+}
+
+button:focus-visible {
+  outline: var(--outline-focus);
+  outline-offset: var(--outline-offset);
+}
+
+button:disabled {
+  background: var(--color-btn-disabled);
+  cursor: not-allowed;
+}
+
+.error {
+  color: var(--color-error);
+  font-size: var(--font-label);
+  min-height: 1.2em;
+}
+
+#dashboard {
+  text-align: center;
+}
+
+.resend-link {
+  display: block;
+  text-align: center;
+  margin-top: var(--space-md);
+  color: var(--color-primary);
+  text-decoration: none;
+  font-size: var(--font-md);
+  cursor: pointer;
+}
+
+.resend-link:hover {
+  text-decoration: underline;
+}
+
+.resend-link:focus-visible {
+  outline: var(--outline-focus);
+  outline-offset: var(--outline-offset);
+}
+
+.resend-link.disabled {
+  color: var(--color-muted);
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.resend-link.disabled:hover {
+  text-decoration: none;
+}
+
+.call-link {
+  display: block;
+  text-align: center;
+  margin-top: var(--space-sm);
+  color: var(--color-primary);
+  text-decoration: none;
+  font-size: var(--font-md);
+  cursor: pointer;
+  border: 1px solid var(--color-primary);
+  background: transparent;
+  padding: var(--space-sm) var(--space-lg);
+  border-radius: var(--radius-sm);
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.call-link:hover {
+  background: var(--color-primary);
+  color: var(--color-card);
+}
+
+.call-link:focus-visible {
+  outline: var(--outline-focus);
+  outline-offset: var(--outline-offset);
+}
+
+.passkey-link {
+  display: block;
+  text-align: center;
+  margin-top: var(--space-lg);
+  color: var(--color-primary);
+  text-decoration: none;
+  font-size: var(--font-md);
+  cursor: pointer;
+}
+
+.passkey-link:hover {
+  text-decoration: underline;
+}
+
+.passkey-link:focus-visible {
+  outline: var(--outline-focus);
+  outline-offset: var(--outline-offset);
+}
+
+.skip-link {
+  display: block;
+  text-align: center;
+  margin-top: var(--space-md);
+  color: var(--color-muted);
+  text-decoration: none;
+  font-size: var(--font-sm);
+  cursor: pointer;
+}
+
+.skip-link:hover {
+  color: var(--color-primary);
+  text-decoration: underline;
+}
+
+.skip-link:focus-visible {
+  outline: var(--outline-focus);
+  outline-offset: var(--outline-offset);
+}
+
+#verification-checklist {
+  list-style: none;
+  padding: 0;
+  margin: var(--space-md) 0;
+  text-align: left;
+}
+
+#verification-checklist li {
+  margin: var(--space-xs) 0;
+}
+
+.status-done .checklist-icon {
+  color: var(--color-done);
+  font-weight: bold;
+}
+
+.status-skipped .checklist-icon {
+  color: var(--color-checklist-muted);
+}
+
+.status-failed .checklist-icon {
+  color: var(--color-failed);
+  font-weight: bold;
+}
