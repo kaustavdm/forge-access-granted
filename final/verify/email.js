@@ -29,14 +29,14 @@ router.post("/email", async (req, res) => {
       body,
     });
 
-    const data = await response.json();
     if (!response.ok) {
-      return errorRes(res, data.status || response.status, data.message, data.code);
+      const err = await response.json().catch(() => ({}));
+      return errorRes(res, response.status, err.message || "Verification failed", err.code || "VERIFY_ERROR");
     }
 
     res.json({ success: true });
   } catch (error) {
-    errorRes(res, error.status, error.message, error.code);
+    errorRes(res, error.status || 500, error.message, error.code || "VERIFY_ERROR");
   }
 });
 
@@ -56,14 +56,15 @@ router.post("/email/validate", async (req, res) => {
       body,
     });
 
-    const data = await response.json();
     if (!response.ok) {
-      return errorRes(res, data.status || response.status, data.message, data.code);
+      const err = await response.json().catch(() => ({}));
+      return errorRes(res, response.status, err.message || "Verification check failed", err.code || "VERIFY_ERROR");
     }
+    const data = await response.json();
 
     res.json({ valid: data.status === "approved" });
   } catch (error) {
-    errorRes(res, error.status, error.message, error.code);
+    errorRes(res, error.status || 500, error.message, error.code || "VERIFY_ERROR");
   }
 });
 
