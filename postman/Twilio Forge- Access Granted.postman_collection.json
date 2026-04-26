@@ -1,561 +1,743 @@
 {
-	"info": {
-		"_postman_id": "65c86259-c11b-4a88-a7da-3fb1e9bbdb8e",
-		"name": "Twilio Forge: Access Granted",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "43445318"
-	},
-	"item": [
-		{
-			"name": "[API] Lookup phone number",
-			"item": [
-				{
-					"name": "Lookup - Basic",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "https://lookups.twilio.com/v2/PhoneNumbers/{{PHONE_NUMBER}}",
-							"protocol": "https",
-							"host": [
-								"lookups",
-								"twilio",
-								"com"
-							],
-							"path": [
-								"v2",
-								"PhoneNumbers",
-								"{{PHONE_NUMBER}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Lookup - Basic - national number and country code",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "https://lookups.twilio.com/v2/PhoneNumbers/{{PHONE_NUMBER}}?CountryCode={{COUNTRY_CODE}}",
-							"protocol": "https",
-							"host": [
-								"lookups",
-								"twilio",
-								"com"
-							],
-							"path": [
-								"v2",
-								"PhoneNumbers",
-								"{{PHONE_NUMBER}}"
-							],
-							"query": [
-								{
-									"key": "CountryCode",
-									"value": "{{COUNTRY_CODE}}"
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Lookup - Line Type Intelligence",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "https://lookups.twilio.com/v2/PhoneNumbers/{{PHONE_NUMBER}}?Fields=line_type_intelligence&CountryCode={{COUNTRY_CODE}}",
-							"protocol": "https",
-							"host": [
-								"lookups",
-								"twilio",
-								"com"
-							],
-							"path": [
-								"v2",
-								"PhoneNumbers",
-								"{{PHONE_NUMBER}}"
-							],
-							"query": [
-								{
-									"key": "Fields",
-									"value": "line_type_intelligence",
-									"description": "Enable the Line Type Intelligence package by specifying it in `Fields`."
-								},
-								{
-									"key": "CountryCode",
-									"value": "{{COUNTRY_CODE}}"
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Lookup - SMS pumping risk",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "https://lookups.twilio.com/v2/PhoneNumbers/{{PHONE_NUMBER}}?Fields=sms_pumping_risk",
-							"protocol": "https",
-							"host": [
-								"lookups",
-								"twilio",
-								"com"
-							],
-							"path": [
-								"v2",
-								"PhoneNumbers",
-								"{{PHONE_NUMBER}}"
-							],
-							"query": [
-								{
-									"key": "Fields",
-									"value": "sms_pumping_risk",
-									"description": "Enable the Line Type Intelligence package by specifying it in `Fields`."
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Lookup - Multiple packages",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "https://lookups.twilio.com/v2/PhoneNumbers/{{PHONE_NUMBER}}?Fields=line_type_intelligence,sms_pumping_risk,line_status,caller_name,phone_number_quality_score",
-							"protocol": "https",
-							"host": [
-								"lookups",
-								"twilio",
-								"com"
-							],
-							"path": [
-								"v2",
-								"PhoneNumbers",
-								"{{PHONE_NUMBER}}"
-							],
-							"query": [
-								{
-									"key": "Fields",
-									"value": "line_type_intelligence,sms_pumping_risk,line_status,caller_name,phone_number_quality_score",
-									"description": "Enable the Line Type Intelligence and SMS pumping risk packages by specifying it in `Fields`."
-								}
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "[API] Verify phone number",
-			"item": [
-				{
-					"name": "Initiate Verify for phone number by SMS",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "urlencoded",
-							"urlencoded": [
-								{
-									"key": "To",
-									"value": "{{PHONE_NUMBER}}",
-									"type": "text"
-								},
-								{
-									"key": "Channel",
-									"value": "sms",
-									"type": "text"
-								}
-							]
-						},
-						"url": {
-							"raw": "https://verify.twilio.com/v2/Services/{{VERIFY_SERVICE_SID}}/Verifications",
-							"protocol": "https",
-							"host": [
-								"verify",
-								"twilio",
-								"com"
-							],
-							"path": [
-								"v2",
-								"Services",
-								"{{VERIFY_SERVICE_SID}}",
-								"Verifications"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Check Verify status",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "https://verify.twilio.com/v2/Services/{{VERIFY_SERVICE_SID}}/Verifications/{{VERIFY_SID}}",
-							"protocol": "https",
-							"host": [
-								"verify",
-								"twilio",
-								"com"
-							],
-							"path": [
-								"v2",
-								"Services",
-								"{{VERIFY_SERVICE_SID}}",
-								"Verifications",
-								"{{VERIFY_SID}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Initiate Verify for phone number by Voice",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "urlencoded",
-							"urlencoded": [
-								{
-									"key": "To",
-									"value": "{{PHONE_NUMBER}}",
-									"type": "text"
-								},
-								{
-									"key": "Channel",
-									"value": "call",
-									"type": "text"
-								}
-							]
-						},
-						"url": {
-							"raw": "https://verify.twilio.com/v2/Services/{{VERIFY_SERVICE_SID}}/Verifications",
-							"protocol": "https",
-							"host": [
-								"verify",
-								"twilio",
-								"com"
-							],
-							"path": [
-								"v2",
-								"Services",
-								"{{VERIFY_SERVICE_SID}}",
-								"Verifications"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Validate Verify token for phone number",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "urlencoded",
-							"urlencoded": [
-								{
-									"key": "To",
-									"value": "{{PHONE_NUMBER}}",
-									"type": "text"
-								},
-								{
-									"key": "Code",
-									"value": "{{VERIFY_CODE}}",
-									"type": "text"
-								}
-							]
-						},
-						"url": {
-							"raw": "https://verify.twilio.com/v2/Services/{{VERIFY_SERVICE_SID}}/VerificationCheck",
-							"protocol": "https",
-							"host": [
-								"verify",
-								"twilio",
-								"com"
-							],
-							"path": [
-								"v2",
-								"Services",
-								"{{VERIFY_SERVICE_SID}}",
-								"VerificationCheck"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Application endpoints",
-			"item": [
-				{
-					"name": "3.1 Basic lookup",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{APP_URL}}/api/lookup/{{PHONE_NUMBER}}",
-							"host": [
-								"{{APP_URL}}"
-							],
-							"path": [
-								"api",
-								"lookup",
-								"{{PHONE_NUMBER}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "3.1 Basic lookup with country code",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{APP_URL}}/api/lookup/{{PHONE_NUMBER}}?countryCode={{COUNTRY_CODE}}",
-							"host": [
-								"{{APP_URL}}"
-							],
-							"path": [
-								"api",
-								"lookup",
-								"{{PHONE_NUMBER}}"
-							],
-							"query": [
-								{
-									"key": "countryCode",
-									"value": "{{COUNTRY_CODE}}"
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "3.2 Lookup with Line Type Intelligence",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{APP_URL}}/api/lookup/{{PHONE_NUMBER}}/line-type",
-							"host": [
-								"{{APP_URL}}"
-							],
-							"path": [
-								"api",
-								"lookup",
-								"{{PHONE_NUMBER}}",
-								"line-type"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "3.3 Lookup with SMS Pumping Risk check",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{APP_URL}}/api/lookup/{{PHONE_NUMBER}}/sms-pumping",
-							"host": [
-								"{{APP_URL}}"
-							],
-							"path": [
-								"api",
-								"lookup",
-								"{{PHONE_NUMBER}}",
-								"sms-pumping"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "3.4 Lookup with multiple packages",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{APP_URL}}/api/lookup/{{PHONE_NUMBER}}/multiple",
-							"host": [
-								"{{APP_URL}}"
-							],
-							"path": [
-								"api",
-								"lookup",
-								"{{PHONE_NUMBER}}",
-								"multiple"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "4.1 Phone verification start - SMS",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"phone\": \"{{PHONE_NUMBER}}\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{APP_URL}}/api/verify/phone",
-							"host": [
-								"{{APP_URL}}"
-							],
-							"path": [
-								"api",
-								"verify",
-								"phone"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "4.2 Phone verification resend - SMS",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"phone\": \"{{PHONE_NUMBER}}\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{APP_URL}}/api/verify/phone",
-							"host": [
-								"{{APP_URL}}"
-							],
-							"path": [
-								"api",
-								"verify",
-								"phone"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "4.3 Phone verification resend - Voice",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"phone\": \"{{PHONE_NUMBER}}\",\n    \"channel\": \"call\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{APP_URL}}/api/verify/phone",
-							"host": [
-								"{{APP_URL}}"
-							],
-							"path": [
-								"api",
-								"verify",
-								"phone"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "4.4 Validate Verify token for phone",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"phone\": \"{{PHONE_NUMBER}}\",\n    \"code\": \"{{VERIFY_CODE}}\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{APP_URL}}/api/verify/phone/validate",
-							"host": [
-								"{{APP_URL}}"
-							],
-							"path": [
-								"api",
-								"verify",
-								"phone",
-								"validate"
-							]
-						}
-					},
-					"response": []
-				}
-			],
-			"description": "Endpoints for the local app.\n\nThe number prefixed in each request denotes the number of the \"Build\" subsection from the [RUNBOOK.md](https://github.com/kaustavdm/forge-access-granted/blob/main/RUNBOOK.md)."
-		}
-	],
-	"auth": {
-		"type": "basic",
-		"basic": [
-			{
-				"key": "password",
-				"value": "{{TWILIO_API_KEY_SECRET}}",
-				"type": "string"
-			},
-			{
-				"key": "username",
-				"value": "{{TWILIO_API_KEY_SID}}",
-				"type": "string"
-			}
-		]
-	},
-	"event": [
-		{
-			"listen": "prerequest",
-			"script": {
-				"type": "text/javascript",
-				"packages": {},
-				"requests": {},
-				"exec": [
-					""
-				]
-			}
-		},
-		{
-			"listen": "test",
-			"script": {
-				"type": "text/javascript",
-				"packages": {},
-				"requests": {},
-				"exec": [
-					""
-				]
-			}
-		}
-	]
+  "info": {
+    "_postman_id": "65c86259-c11b-4a88-a7da-3fb1e9bbdb8e",
+    "name": "Twilio Forge: Access Granted",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "43445318"
+  },
+  "item": [
+    {
+      "name": "Setup",
+      "item": [
+        {
+          "name": "Update a Passkey-enabled Verify Service",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "type": "text",
+                  "key": "FriendlyName",
+                  "value": "Forge"
+                },
+                {
+                  "type": "text",
+                  "key": "Passkeys.RelyingParty.Id",
+                  "value": "{{PASSKEYS_RELYINGPARTY_ID}}",
+                  "description": "e.g., `example.com`"
+                },
+                {
+                  "type": "text",
+                  "key": "Passkeys.RelyingParty.Name",
+                  "value": "{{PASSKEYS_RELYINGPARTY_NAME}}",
+                  "description": "e.g., `Twilio SIGNAL`"
+                },
+                {
+                  "type": "text",
+                  "key": "Passkeys.RelyingParty.Origins",
+                  "value": "{{PASSKEYS_RELYINGPARTY_ORIGINS}}",
+                  "description": "e.g., `http://localhost:3000,https://example.com`. Comma-separated for multiple origins"
+                },
+                {
+                  "type": "text",
+                  "key": "Passkeys.AuthenticatorAttachment",
+                  "value": "any"
+                },
+                {
+                  "type": "text",
+                  "key": "Passkeys.DiscoverableCredentials",
+                  "value": "preferred"
+                },
+                {
+                  "type": "text",
+                  "key": "Passkeys.UserVerification",
+                  "value": "preferred"
+                }
+              ]
+            },
+            "url": {
+              "raw": "https://verify.twilio.com/v2/Services/{{VERIFY_SERVICE_SID}}",
+              "protocol": "https",
+              "host": [
+                "verify",
+                "twilio",
+                "com"
+              ],
+              "path": [
+                "v2",
+                "Services",
+                "{{VERIFY_SERVICE_SID}}"
+              ]
+            },
+            "description": "Generated from cURL: curl -L 'https://verify.twilio.com/v2/Services' \\\n     -H 'Content-Type: application/x-www-form-urlencoded' \\\n     -H 'Authorization: ••••••' \\\n     --data-urlencode 'FriendlyName=Fancy Service' \\\n     --data-urlencode 'Passkeys.RelyingParty.Id=example.com' \\\n     --data-urlencode 'Passkeys.RelyingParty.Name=My domain' \\\n     --data-urlencode 'Passkeys.RelyingParty.Origins=https://example.com,https://login.example.com' \\\n     --data-urlencode 'Passkeys.AuthenticatorAttachment=platform' \\\n     --data-urlencode 'Passkeys.DiscoverableCredentials=preferred' \\\n     --data-urlencode 'Passkeys.UserVerification=preferred'"
+          },
+          "response": []
+        },
+        {
+          "name": "Create a new Passkey-enabled Verify Service",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "type": "text",
+                  "key": "FriendlyName",
+                  "value": "{{PASSKEYS_FRIENDLY_NAME}}",
+                  "description": "can be a user data, e.g., their name"
+                },
+                {
+                  "type": "text",
+                  "key": "Passkeys.RelyingParty.Id",
+                  "value": "{{PASSKEYS_RELYINGPARTY_ID}}",
+                  "description": "e.g., `example.com`"
+                },
+                {
+                  "type": "text",
+                  "key": "Passkeys.RelyingParty.Name",
+                  "value": "{{PASSKEYS_RELYINGPARTY_NAME}}",
+                  "description": "e.g., `Twilio SIGNAL`"
+                },
+                {
+                  "type": "text",
+                  "key": "Passkeys.RelyingParty.Origins",
+                  "value": "{{PASSKEYS_RELYINGPARTY_ORIGINS}}",
+                  "description": "e.g., `http://localhost:3000,https://example.com`. Comma-separated for multiple origins"
+                },
+                {
+                  "type": "text",
+                  "key": "Passkeys.AuthenticatorAttachment",
+                  "value": "any"
+                },
+                {
+                  "type": "text",
+                  "key": "Passkeys.DiscoverableCredentials",
+                  "value": "preferred"
+                },
+                {
+                  "type": "text",
+                  "key": "Passkeys.UserVerification",
+                  "value": "preferred"
+                }
+              ]
+            },
+            "url": {
+              "raw": "https://verify.twilio.com/v2/Services/",
+              "protocol": "https",
+              "host": [
+                "verify",
+                "twilio",
+                "com"
+              ],
+              "path": [
+                "v2",
+                "Services",
+                ""
+              ]
+            },
+            "description": "Generated from cURL: curl -L 'https://verify.twilio.com/v2/Services' \\\n     -H 'Content-Type: application/x-www-form-urlencoded' \\\n     -H 'Authorization: ••••••' \\\n     --data-urlencode 'FriendlyName=Fancy Service' \\\n     --data-urlencode 'Passkeys.RelyingParty.Id=example.com' \\\n     --data-urlencode 'Passkeys.RelyingParty.Name=My domain' \\\n     --data-urlencode 'Passkeys.RelyingParty.Origins=https://example.com,https://login.example.com' \\\n     --data-urlencode 'Passkeys.AuthenticatorAttachment=platform' \\\n     --data-urlencode 'Passkeys.DiscoverableCredentials=preferred' \\\n     --data-urlencode 'Passkeys.UserVerification=preferred'"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "[API] Lookup phone number",
+      "item": [
+        {
+          "name": "Lookup - Basic",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://lookups.twilio.com/v2/PhoneNumbers/{{PHONE_NUMBER}}",
+              "protocol": "https",
+              "host": [
+                "lookups",
+                "twilio",
+                "com"
+              ],
+              "path": [
+                "v2",
+                "PhoneNumbers",
+                "{{PHONE_NUMBER}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Lookup - Basic - national number and country code",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://lookups.twilio.com/v2/PhoneNumbers/{{PHONE_NUMBER}}?CountryCode={{COUNTRY_CODE}}",
+              "protocol": "https",
+              "host": [
+                "lookups",
+                "twilio",
+                "com"
+              ],
+              "path": [
+                "v2",
+                "PhoneNumbers",
+                "{{PHONE_NUMBER}}"
+              ],
+              "query": [
+                {
+                  "key": "CountryCode",
+                  "value": "{{COUNTRY_CODE}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Lookup - Line Type Intelligence",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://lookups.twilio.com/v2/PhoneNumbers/{{PHONE_NUMBER}}?Fields=line_type_intelligence&CountryCode={{COUNTRY_CODE}}",
+              "protocol": "https",
+              "host": [
+                "lookups",
+                "twilio",
+                "com"
+              ],
+              "path": [
+                "v2",
+                "PhoneNumbers",
+                "{{PHONE_NUMBER}}"
+              ],
+              "query": [
+                {
+                  "key": "Fields",
+                  "value": "line_type_intelligence",
+                  "description": "Enable the Line Type Intelligence package by specifying it in `Fields`."
+                },
+                {
+                  "key": "CountryCode",
+                  "value": "{{COUNTRY_CODE}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Lookup - SMS pumping risk",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://lookups.twilio.com/v2/PhoneNumbers/{{PHONE_NUMBER}}?Fields=sms_pumping_risk",
+              "protocol": "https",
+              "host": [
+                "lookups",
+                "twilio",
+                "com"
+              ],
+              "path": [
+                "v2",
+                "PhoneNumbers",
+                "{{PHONE_NUMBER}}"
+              ],
+              "query": [
+                {
+                  "key": "Fields",
+                  "value": "sms_pumping_risk",
+                  "description": "Enable the Line Type Intelligence package by specifying it in `Fields`."
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Lookup - Multiple packages",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://lookups.twilio.com/v2/PhoneNumbers/{{PHONE_NUMBER}}?Fields=line_type_intelligence,sms_pumping_risk,line_status,caller_name,phone_number_quality_score",
+              "protocol": "https",
+              "host": [
+                "lookups",
+                "twilio",
+                "com"
+              ],
+              "path": [
+                "v2",
+                "PhoneNumbers",
+                "{{PHONE_NUMBER}}"
+              ],
+              "query": [
+                {
+                  "key": "Fields",
+                  "value": "line_type_intelligence,sms_pumping_risk,line_status,caller_name,phone_number_quality_score",
+                  "description": "Enable the Line Type Intelligence and SMS pumping risk packages by specifying it in `Fields`."
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "[API] Verify phone number",
+      "item": [
+        {
+          "name": "Initiate Verify for phone number by SMS",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "To",
+                  "value": "{{PHONE_NUMBER}}",
+                  "type": "text",
+                  "uuid": "30b87631-1d22-4389-8b57-20b4e6d0a8d4"
+                },
+                {
+                  "key": "Channel",
+                  "value": "sms",
+                  "type": "text",
+                  "uuid": "d8879c69-1f94-41f6-9ff3-27b54850fadf"
+                }
+              ]
+            },
+            "url": {
+              "raw": "https://verify.twilio.com/v2/Services/{{VERIFY_SERVICE_SID}}/Verifications",
+              "protocol": "https",
+              "host": [
+                "verify",
+                "twilio",
+                "com"
+              ],
+              "path": [
+                "v2",
+                "Services",
+                "{{VERIFY_SERVICE_SID}}",
+                "Verifications"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Check Verify status",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://verify.twilio.com/v2/Services/{{VERIFY_SERVICE_SID}}/Verifications/{{VERIFY_SID}}",
+              "protocol": "https",
+              "host": [
+                "verify",
+                "twilio",
+                "com"
+              ],
+              "path": [
+                "v2",
+                "Services",
+                "{{VERIFY_SERVICE_SID}}",
+                "Verifications",
+                "{{VERIFY_SID}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Initiate Verify for phone number by Voice",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "To",
+                  "value": "{{PHONE_NUMBER}}",
+                  "type": "text",
+                  "uuid": "30b87631-1d22-4389-8b57-20b4e6d0a8d4"
+                },
+                {
+                  "key": "Channel",
+                  "value": "call",
+                  "type": "text",
+                  "uuid": "d8879c69-1f94-41f6-9ff3-27b54850fadf"
+                }
+              ]
+            },
+            "url": {
+              "raw": "https://verify.twilio.com/v2/Services/{{VERIFY_SERVICE_SID}}/Verifications",
+              "protocol": "https",
+              "host": [
+                "verify",
+                "twilio",
+                "com"
+              ],
+              "path": [
+                "v2",
+                "Services",
+                "{{VERIFY_SERVICE_SID}}",
+                "Verifications"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Validate Verify token for phone number",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "To",
+                  "value": "{{PHONE_NUMBER}}",
+                  "type": "text",
+                  "uuid": "30b87631-1d22-4389-8b57-20b4e6d0a8d4"
+                },
+                {
+                  "key": "Code",
+                  "value": "{{VERIFY_CODE}}",
+                  "type": "text",
+                  "uuid": "d8879c69-1f94-41f6-9ff3-27b54850fadf"
+                }
+              ]
+            },
+            "url": {
+              "raw": "https://verify.twilio.com/v2/Services/{{VERIFY_SERVICE_SID}}/VerificationCheck",
+              "protocol": "https",
+              "host": [
+                "verify",
+                "twilio",
+                "com"
+              ],
+              "path": [
+                "v2",
+                "Services",
+                "{{VERIFY_SERVICE_SID}}",
+                "VerificationCheck"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "[API] Passkeys",
+      "item": [
+        {
+          "name": "Create Passkey",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"friendly_name\": \"Forge Verify Passkey\",\n    \"identity\": \"{{$randomUUID}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://verify.twilio.com/v2/Services/{{VERIFY_SERVICE_SID}}/Passkeys/Factors",
+              "protocol": "https",
+              "host": [
+                "verify",
+                "twilio",
+                "com"
+              ],
+              "path": [
+                "v2",
+                "Services",
+                "{{VERIFY_SERVICE_SID}}",
+                "Passkeys",
+                "Factors"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Application endpoints",
+      "item": [
+        {
+          "name": "3.1 Basic lookup",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{APP_URL}}/api/lookup/{{PHONE_NUMBER}}",
+              "host": [
+                "{{APP_URL}}"
+              ],
+              "path": [
+                "api",
+                "lookup",
+                "{{PHONE_NUMBER}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "3.1 Basic lookup with country code",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{APP_URL}}/api/lookup/{{PHONE_NUMBER}}?countryCode={{COUNTRY_CODE}}",
+              "host": [
+                "{{APP_URL}}"
+              ],
+              "path": [
+                "api",
+                "lookup",
+                "{{PHONE_NUMBER}}"
+              ],
+              "query": [
+                {
+                  "key": "countryCode",
+                  "value": "{{COUNTRY_CODE}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "3.2 Lookup with Line Type Intelligence",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{APP_URL}}/api/lookup/{{PHONE_NUMBER}}/line-type",
+              "host": [
+                "{{APP_URL}}"
+              ],
+              "path": [
+                "api",
+                "lookup",
+                "{{PHONE_NUMBER}}",
+                "line-type"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "3.3 Lookup with SMS Pumping Risk check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{APP_URL}}/api/lookup/{{PHONE_NUMBER}}/sms-pumping",
+              "host": [
+                "{{APP_URL}}"
+              ],
+              "path": [
+                "api",
+                "lookup",
+                "{{PHONE_NUMBER}}",
+                "sms-pumping"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "3.4 Lookup with multiple packages",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{APP_URL}}/api/lookup/{{PHONE_NUMBER}}/multiple",
+              "host": [
+                "{{APP_URL}}"
+              ],
+              "path": [
+                "api",
+                "lookup",
+                "{{PHONE_NUMBER}}",
+                "multiple"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "4.1 Phone verification start - SMS",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"phone\": \"{{PHONE_NUMBER}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{APP_URL}}/api/verify/phone",
+              "host": [
+                "{{APP_URL}}"
+              ],
+              "path": [
+                "api",
+                "verify",
+                "phone"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "4.2 Phone verification resend - SMS",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"phone\": \"{{PHONE_NUMBER}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{APP_URL}}/api/verify/phone",
+              "host": [
+                "{{APP_URL}}"
+              ],
+              "path": [
+                "api",
+                "verify",
+                "phone"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "4.3 Phone verification resend - Voice",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"phone\": \"{{PHONE_NUMBER}}\",\n    \"channel\": \"call\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{APP_URL}}/api/verify/phone",
+              "host": [
+                "{{APP_URL}}"
+              ],
+              "path": [
+                "api",
+                "verify",
+                "phone"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "4.4 Validate Verify token for phone",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"phone\": \"{{PHONE_NUMBER}}\",\n    \"code\": \"{{VERIFY_CODE}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{APP_URL}}/api/verify/phone/validate",
+              "host": [
+                "{{APP_URL}}"
+              ],
+              "path": [
+                "api",
+                "verify",
+                "phone",
+                "validate"
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "description": "Endpoints for the local app.\n\nThe number prefixed in each request denotes the number of the \"Build\" subsection from the [RUNBOOK.md](https://github.com/kaustavdm/forge-access-granted/blob/main/RUNBOOK.md)."
+    }
+  ],
+  "auth": {
+    "type": "basic",
+    "basic": [
+      {
+        "key": "password",
+        "value": "{{TWILIO_API_KEY_SECRET}}",
+        "type": "string"
+      },
+      {
+        "key": "username",
+        "value": "{{TWILIO_API_KEY_SID}}",
+        "type": "string"
+      }
+    ]
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ]
 }
