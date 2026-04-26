@@ -6,6 +6,9 @@
   var emailError = document.getElementById("email-error");
   var emailOtpError = document.getElementById("email-otp-error");
   var skipEmailLink = document.getElementById("skip-email");
+  var resendLink = document.getElementById("resend-email-otp");
+
+  var resendTimerId = null;
 
   function showView(id) {
     emailForm.style.display = id === "email-form" ? "" : "none";
@@ -15,6 +18,23 @@
   var clearError = App.ui.clearError;
   var showError = App.ui.showError;
   var toggleButton = App.ui.toggleButton;
+
+  function startResendTimer(duration) {
+    var remaining = duration;
+    resendLink.classList.add("disabled");
+    resendLink.textContent = "Resend OTP in " + remaining + " seconds";
+    resendTimerId = setInterval(function () {
+      remaining--;
+      if (remaining <= 0) {
+        clearInterval(resendTimerId);
+        resendTimerId = null;
+        resendLink.classList.remove("disabled");
+        resendLink.textContent = "Resend OTP";
+        return;
+      }
+      resendLink.textContent = "Resend OTP in " + remaining + " seconds";
+    }, 1000);
+  }
 
   function handleEmailSubmit(e) {
     e.preventDefault();
@@ -28,6 +48,7 @@
       if (data.success) {
         App.state.set("userEmail", email);
         showView("email-otp-form");
+        startResendTimer(30);
       } else {
         showError(emailError, data.message || "Failed to send OTP");
       }
@@ -58,6 +79,24 @@
     });
   }
 
+  function handleResendEmailOtp(e) {
+    e.preventDefault();
+    if (resendLink.classList.contains("disabled")) return;
+    clearError(emailOtpError);
+
+    App.api.post("/api/verify/email", { email: App.state.get("userEmail") })
+      .then(function (res) {
+        if (!res.success) {
+          showError(emailOtpError, res.message || "Failed to resend OTP.");
+          return;
+        }
+        startResendTimer(30);
+      })
+      .catch(function () {
+        showError(emailOtpError, "Failed to resend OTP. Please try again.");
+      });
+  }
+
   function handleSkipEmail(e) {
     e.preventDefault();
     App.state.set("emailSkipped", true);
@@ -66,6 +105,7 @@
 
   emailForm.onsubmit = handleEmailSubmit;
   emailOtpForm.onsubmit = handleEmailOtpSubmit;
+  resendLink.onclick = handleResendEmailOtp;
   skipEmailLink.onclick = handleSkipEmail;
 
 })();
