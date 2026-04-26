@@ -151,8 +151,12 @@
     window.location.href = "email.html";
   }
 
+  var passkeyAuthInFlight = false;
+
   function handlePasskeyLogin(e) {
     e.preventDefault();
+    if (passkeyAuthInFlight) return;
+    passkeyAuthInFlight = true;
     clearError(phoneError);
 
     App.api.post("/api/passkeys/authenticate", {})
@@ -174,6 +178,7 @@
           .then(function (result) {
             if (!result || !result.success) {
               showError(phoneError, "Passkey authentication failed.");
+              passkeyAuthInFlight = false;
               return;
             }
             App.state.set("passkeyFriendlyName", result.friendly_name || null);
@@ -182,6 +187,7 @@
           });
       })
       .catch(function (err) {
+        passkeyAuthInFlight = false;
         if (err.name === "NotAllowedError") {
           showError(phoneError, "Passkey authentication was cancelled.");
         } else {
