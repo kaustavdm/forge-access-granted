@@ -4,17 +4,21 @@ This directory contains the complete, working implementation of the "Twilio Forg
 
 ## Files in this Directory
 
-- `lookup.js` - Complete implementation of Twilio Lookup API routes
-- `verify.js` - Complete implementation of Twilio Verify API routes
-- `passkeys.js` - Complete implementation of Twilio Verify Passkeys routes
-- `server.js` - Configured Express.js server
-- `/public/` - UI for testing the implementation
+- `lib/twilio-fetch.js` - Lightweight fetch wrapper that injects Twilio Basic auth
+- `lib/errors.js` - Shared error response helper
+- `lookup.js` - Twilio Lookup v2 API routes (phone validation, line type, SMS pumping risk)
+- `verify/phone.js` - Phone OTP send and verify routes
+- `verify/email.js` - Email OTP send and verify routes
+- `verify/passkeys.js` - Passkey registration and authentication routes
+- `verify/index.js` - Sub-router mounting all verify routes
+- `server.js` - Express server bootstrap
+- `public/` - Multi-page UI (phone → email → passkey → dashboard)
 
 ## Running the Final Version
 
-1. Make sure you've installed the dependencies from the root directory:
+1. Install dependencies:
    ```
-   cd ..
+   cd final
    npm install
    ```
 
