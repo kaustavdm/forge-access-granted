@@ -1,4 +1,6 @@
 node_modules/
+docs/superpowers/
+docs/refactor-plan.md
 .DS_Store
 .env
 dist/
