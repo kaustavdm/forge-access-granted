@@ -1,49 +1,48 @@
 # Twilio Forge: Access Granted
 
-This repository contains follow-along steps and resources for the **"Twilio Forge: Access Granted"** workshop, focused on building a phone verification onboarding flow using Twilio Lookup and Verify APIs. It is designed to help you learn how to validate phone numbers, send verification codes, and create a complete user verification experience.
+This repository contains follow-along steps and resources for the **"Twilio Forge: Access Granted"** workshop, focused on building a user verification onboarding flow using Twilio Lookup, Verify, and Passkeys APIs.
 
-## 📖 Main Resource: The Runbook
+## The Runbook
 
-The [RUNBOOK.md](./RUNBOOK.md) provides a step-by-step guide to:
+The [RUNBOOK.md](./RUNBOOK.md) is a step-by-step guide split into sections:
 
-- Setting up your Twilio account with API keys and Verify service
-- Using Twilio Lookup API to validate phone numbers
-- Implementing Line Type Intelligence and SMS Pumping Risk checks
-- Sending verification codes via SMS and voice using Twilio Verify API
-- Building a complete phone verification flow with a user-friendly UI
-- Testing your implementation with Postman
+| # | Section | What You'll Build |
+|---|---------|-------------------|
+| 1 | [Setup](./RUNBOOK_1_SETUP.md) | Twilio credentials, Verify service, local dev environment |
+| 2 | [Lookup Routes](./RUNBOOK_2_LOOKUP.md) | Phone validation, line type intelligence, SMS pumping risk |
+| 3 | [Phone OTP Routes](./RUNBOOK_3_VERIFY_PHONE.md) | SMS/voice verification send and check |
+| 4 | [Email OTP Routes](./RUNBOOK_4_VERIFY_EMAIL.md) | Email verification send and check (optional) |
+| 5 | [Passkeys](./RUNBOOK_5_PASSKEYS.md) | WebAuthn passkey registration and authentication (optional) |
 
-**Read the [RUNBOOK.md](./RUNBOOK.md) for detailed instructions and workshop steps.**
+**Start with the [RUNBOOK.md](./RUNBOOK.md) for an overview and prerequisites.**
 
-> [!TIP]
-> The workshop uses a scaffolded Express.js application. You'll implement the Twilio API calls in `build/lookup.js` and `build/verify.js`. If you get stuck, check the [`./final/`](./final/) directory for the complete implementation.
-
-## 🚀 Quick Links
-
-### Postman resources
-
-- [Postman Collection](./postman/Twilio%20Forge-%20Access%20Granted.postman_collection.json)
-- [Postman Environment](./postman/Forge-%20Access%20Granted.postman_environment.json)
-
-Import these files into Postman to easily follow and test the API requests described in the Runbook.
-
-### Workshop structure
+## Workshop Structure
 
 This repository is structured for hands-on learning:
 
-- **[`./build/`](./build/) directory**: Contains scaffolded files (`lookup.js`, `verify.js`) where you'll implement the Twilio API calls
-- **[`./build/public/`](./build/public/) directory**: Pre-built UI for testing your implementation
-- **[`./final/`](./final/) directory**: Contains the complete, working implementation for reference
+- **[`./build/`](./build/) directory**: Scaffolded files with TODO placeholders where you'll implement the Twilio API calls
+- **[`./final/`](./final/) directory**: Complete, working implementation for reference
+- **[`./postman/`](./postman/) directory**: Postman collection and environment for testing Twilio APIs directly
 
-> [!TIP]
-> This project uses npm workspaces for easier dependency management. Running `npm install` in the root directory will automatically install dependencies for both the `build/` and `final/` directories. Common dependencies are installed only once in the root `node_modules`, reducing duplication and ensuring consistent versions across the project.
+This project uses npm workspaces. Running `npm install` in the root directory installs dependencies for both `build/` and `final/`.
 
-### Key files
+### Key Files
 
-- [`build/lookup.js`](./build/lookup.js) - Implement Twilio Lookup API routes (basic lookup, line type intelligence, SMS pumping risk)
-- [`build/verify.js`](./build/verify.js) - Implement Twilio Verify API routes (send and validate verification codes)
-- [`build/server.js`](./build/server.js) - Pre-configured Express.js server (no edits needed)
+| File | Purpose | Edit? |
+|------|---------|-------|
+| `build/lookup.js` | Twilio Lookup v2 API routes | **Yes** |
+| `build/verify/phone.js` | Phone OTP send and verify routes | **Yes** |
+| `build/verify/email.js` | Email OTP send and verify routes | **Yes** |
+| `build/verify/passkeys.js` | Passkey registration and authentication | **Yes** |
+| `build/server.js` | Express server bootstrap | No |
+| `build/lib/twilio-fetch.js` | Fetch wrapper with Twilio Basic auth | No |
+| `build/lib/errors.js` | Shared error response helper | No |
+| `build/public/` | Multi-page UI (phone, email, passkey, dashboard) | No |
 
----
+### Running the Workshop
 
-☮️
+```bash
+npm install        # Install all dependencies
+npm start          # Run the build version (your workshop code)
+npm run start:final  # Run the complete reference implementation
+```
