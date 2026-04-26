@@ -8,20 +8,12 @@
   var createNewLink = document.getElementById("passkey-create-new");
   var skipLink = document.getElementById("skip-passkey");
 
-  function clearError(el) {
-    el.textContent = "";
-  }
-
-  function showError(el, msg) {
-    el.textContent = msg;
-  }
-
-  function toggleButton(btn, disabled) {
-    btn.disabled = disabled;
-  }
+  var clearError = App.ui.clearError;
+  var showError = App.ui.showError;
+  var toggleButton = App.ui.toggleButton;
 
   function setupView() {
-    if (App.state.passkeyRegistered) {
+    if (App.state.get("passkeyRegistered")) {
       newDiv.style.display = "none";
       existingDiv.style.display = "";
     } else {
@@ -48,8 +40,8 @@
 
         return App.api.post("/api/passkeys/authenticate/verify", assertion.toJSON()).then(function (verifyData) {
           if (verifyData.success) {
-            App.state.passkeyFriendlyName = verifyData.friendly_name || null;
-            App.state.passkeyAuthUsed = true;
+            App.state.set("passkeyFriendlyName", verifyData.friendly_name || null);
+            App.state.set("passkeyAuthUsed", true);
             return true;
           }
 
@@ -68,7 +60,7 @@
     toggleButton(button, true);
 
     var friendlyName = friendlyNameInput.value.trim() ||
-      App.state.userEmail || App.state.userPhone || "My Passkey";
+      App.state.get("userEmail") || App.state.get("userPhone") || "My Passkey";
 
     App.api.post("/api/passkeys/register", { friendly_name: friendlyName })
       .then(function (data) {
@@ -91,9 +83,8 @@
             return App.api.post("/api/passkeys/register/verify", credential.toJSON())
               .then(function (verifyData) {
                 if (verifyData.success) {
-                  App.state.passkeyRegistered = true;
-                  App.state.save("passkeyRegistered");
-                  window.location.href = "/dashboard.html";
+                  App.state.set("passkeyRegistered", true);
+                  window.location.href = "dashboard.html";
                 } else {
                   showError(errorEl, "Passkey registration failed. Please try again.");
                 }
@@ -117,7 +108,7 @@
     runPasskeyAuth()
       .then(function (success) {
         if (success) {
-          window.location.href = "/dashboard.html";
+          window.location.href = "dashboard.html";
         }
         toggleButton(signinBtn, false);
       })
@@ -139,11 +130,10 @@
 
   function handleSkipPasskey(e) {
     e.preventDefault();
-    if (!App.state.passkeyRegistered) {
-      App.state.passkeyFailed = true;
-      App.state.save("passkeyFailed");
+    if (!App.state.get("passkeyRegistered")) {
+      App.state.set("passkeyFailed", true);
     }
-    window.location.href = "/dashboard.html";
+    window.location.href = "dashboard.html";
   }
 
   form.onsubmit = handleRegisterPasskey;
@@ -151,6 +141,5 @@
   createNewLink.onclick = handleCreateNew;
   skipLink.onclick = handleSkipPasskey;
 
-  App.state.load();
   setupView();
 })();

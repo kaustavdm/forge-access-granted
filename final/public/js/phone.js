@@ -17,17 +17,9 @@
     phoneOtpForm.style.display = id === "phone-otp-form" ? "" : "none";
   }
 
-  function clearError(el) {
-    el.textContent = "";
-  }
-
-  function showError(el, msg) {
-    el.textContent = msg;
-  }
-
-  function toggleButton(btn, disabled) {
-    btn.disabled = disabled;
-  }
+  var clearError = App.ui.clearError;
+  var showError = App.ui.showError;
+  var toggleButton = App.ui.toggleButton;
 
   function startResendTimer(duration) {
     var remaining = duration;
@@ -80,7 +72,7 @@
               toggleButton(submitBtn, false);
               return;
             }
-            App.state.userPhone = phone;
+            App.state.set("userPhone", phone);
             showView("phone-otp-form");
             startResendTimer(30);
             toggleButton(submitBtn, false);
@@ -101,15 +93,14 @@
     var submitBtn = phoneOtpForm.querySelector("button[type=submit]");
     toggleButton(submitBtn, true);
 
-    App.api.post("/api/verify/phone/validate", { phone: App.state.userPhone, code: code })
+    App.api.post("/api/verify/phone/validate", { phone: App.state.get("userPhone"), code: code })
       .then(function (data) {
         if (!data.valid) {
           showError(phoneOtpError, data.message || "Invalid code. Please try again.");
           toggleButton(submitBtn, false);
           return;
         }
-        App.state.phoneVerified = true;
-        App.state.save("phoneVerified");
+        App.state.set("phoneVerified", true);
         stopResendTimer();
         window.location.href = "email.html";
       })
@@ -124,7 +115,7 @@
     if (resendLink.classList.contains("disabled")) return;
     clearError(phoneOtpError);
 
-    App.api.post("/api/verify/phone", { phone: App.state.userPhone })
+    App.api.post("/api/verify/phone", { phone: App.state.get("userPhone") })
       .then(function (res) {
         if (res.error) {
           showError(phoneOtpError, res.error);
@@ -141,7 +132,7 @@
     e.preventDefault();
     clearError(phoneOtpError);
 
-    App.api.post("/api/verify/phone", { phone: App.state.userPhone, channel: "call" })
+    App.api.post("/api/verify/phone", { phone: App.state.get("userPhone"), channel: "call" })
       .then(function (res) {
         if (res.error) {
           showError(phoneOtpError, res.error);
@@ -156,8 +147,7 @@
 
   function handleSkipPhone(e) {
     e.preventDefault();
-    App.state.phoneSkipped = true;
-    App.state.save("phoneSkipped");
+    App.state.set("phoneSkipped", true);
     window.location.href = "email.html";
   }
 
@@ -186,8 +176,8 @@
               showError(phoneError, "Passkey authentication failed.");
               return;
             }
-            App.state.passkeyFriendlyName = result.friendly_name || null;
-            App.state.passkeyAuthUsed = true;
+            App.state.set("passkeyFriendlyName", result.friendly_name || null);
+            App.state.set("passkeyAuthUsed", true);
             window.location.href = "dashboard.html";
           });
       })
@@ -207,5 +197,4 @@
   skipPhoneLink.onclick = handleSkipPhone;
   passkeyLoginLink.onclick = handlePasskeyLogin;
 
-  App.state.load();
 })();
