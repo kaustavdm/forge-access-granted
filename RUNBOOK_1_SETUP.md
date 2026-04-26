@@ -57,11 +57,13 @@ SMS is enabled by default on new Verify services. Verify that:
 > [!NOTE]
 > This step is optional. Skip it if you only want to test phone verification and passkeys.
 
-To enable email verification:
+To enable email verification, you will additionally need a Twilio Sendgrid account with a domain configured:
 
 1. In your Verify service settings, enable the **Email** channel
 2. Configure an email integration (Twilio SendGrid or custom SMTP)
 3. Set up an approved sender email address
+
+See [Send Email Verifications with Verify and Twilio SendGrid](https://www.twilio.com/docs/verify/email) for step-by-step guide.
 
 ### 1.3d Configure Passkeys (Optional)
 
@@ -73,14 +75,14 @@ To enable email verification:
 
 Configure your Verify service with [Relying Party settings for passkeys](https://www.twilio.com/docs/verify/quickstarts/passkeys#create-passkey-enabled-verify-service):
 
-| Property | Value | Description |
-|----------|-------|-------------|
-| `Passkeys.RelyingParty.Id` | `localhost` | Domain where passkeys will be used |
-| `Passkeys.RelyingParty.Name` | `Forge Access Granted` | Shown during passkey prompts |
-| `Passkeys.RelyingParty.Origins` | `http://localhost:3000` | Origin URL(s) allowed for passkeys |
-| `Passkeys.AuthenticatorAttachment` | `platform` | Use device biometrics (Touch ID, Face ID, Windows Hello) |
-| `Passkeys.UserVerification` | `preferred` | Request biometric/PIN verification when available |
-| `Passkeys.DiscoverableCredentials` | `preferred` | Enable username-free login when supported |
+| Property                           | Value                   | Description                                              |
+| ---------------------------------- | ----------------------- | -------------------------------------------------------- |
+| `Passkeys.RelyingParty.Id`         | `localhost`             | Domain where passkeys will be used                       |
+| `Passkeys.RelyingParty.Name`       | `Forge Access Granted`  | Shown during passkey prompts                             |
+| `Passkeys.RelyingParty.Origins`    | `http://localhost:3000` | Origin URL(s) allowed for passkeys                       |
+| `Passkeys.AuthenticatorAttachment` | `platform`              | Use device biometrics (Touch ID, Face ID, Windows Hello) |
+| `Passkeys.UserVerification`        | `preferred`             | Request biometric/PIN verification when available        |
+| `Passkeys.DiscoverableCredentials` | `preferred`             | Enable username-free login when supported                |
 
 Run this curl command to configure passkeys on your Verify service:
 
@@ -138,6 +140,7 @@ The API routes won't work yet — you'll implement them in the following section
 
 > [!TIP]
 > To see the completed reference implementation at any time, run:
+>
 > ```bash
 > npm run start:final
 > ```
