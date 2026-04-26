@@ -1,16 +1,15 @@
+"use strict";
+
 const dotenv = require("dotenv");
 const path = require("path");
 const express = require("express");
-const twilio = require("twilio");
+const { createTwilioFetch } = require("./lib/twilio-fetch");
 
-// Load environment variables first
 dotenv.config();
 
-// Import route modules
 const lookupRoutes = require("./lookup");
 const verifyRoutes = require("./verify");
 
-// Environment validation
 const requiredEnvVars = [
   "TWILIO_API_KEY_SID",
   "TWILIO_API_KEY_SECRET",
@@ -26,20 +25,15 @@ if (missingVars.length > 0) {
   process.exit(1);
 }
 
-// Initialize Twilio client
-const twilioClient = twilio(
+const twilioFetch = createTwilioFetch(
   process.env.TWILIO_API_KEY_SID,
   process.env.TWILIO_API_KEY_SECRET,
-  { accountSid: process.env.TWILIO_ACCOUNT_SID },
 );
 
-// Initialize Express app
 const app = express();
 
-// Trust proxy for production deployment
 app.set("trust proxy", 1);
 
-// Request logging middleware
 app.use((req, res, next) => {
   const timestamp = new Date().toISOString();
   console.log(
@@ -48,24 +42,21 @@ app.use((req, res, next) => {
   next();
 });
 
-// Middleware setup
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 app.use(express.static(path.join(__dirname, "public")));
 
-// Initialize and mount API routes
-lookupRoutes.initialize(twilioClient);
-verifyRoutes.initialize(twilioClient, process.env.TWILIO_VERIFY_SERVICE_SID);
+lookupRoutes.initialize(twilioFetch);
+verifyRoutes.initialize(twilioFetch, process.env.TWILIO_VERIFY_SERVICE_SID);
 
 app.use("/api/lookup", lookupRoutes.router);
 app.use("/api/verify", verifyRoutes.router);
+app.use("/api/passkeys", verifyRoutes.passkeysRouter);
 
-// Health check endpoint
 app.get("/health", (req, res) => {
   res.status(200).json({ status: "OK", timestamp: new Date().toISOString() });
 });
 
-// 404 handler for unmatched routes
 app.use((req, res, next) => {
   res.status(404).json({
     error: "Not Found",
@@ -74,7 +65,6 @@ app.use((req, res, next) => {
   });
 });
 
-// Global error handler
 app.use((err, req, res, next) => {
   console.error("Unhandled error:", err);
   res.status(500).json({
@@ -85,7 +75,6 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Start server
 const PORT = process.env.PORT || 3000;
 const HOST = process.env.HOST || "0.0.0.0";
 
@@ -95,7 +84,11 @@ const server = app.listen(PORT, HOST, () => {
   console.log(`Environment: ${process.env.NODE_ENV || "development"}`);
 });
 
-// Graceful shutdown
+server.on("error", (err) => {
+  console.error(`Failed to start server: ${err.message}`);
+  process.exit(1);
+});
+
 process.on("SIGTERM", () => {
   console.log("SIGTERM received, shutting down gracefully");
   server.close(() => {
