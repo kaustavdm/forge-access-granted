@@ -8,10 +8,10 @@
   </head>
 
   <body>
-    <div id="app">
+    <div id="app" data-step="Step 2 of 3">
       <form id="email-form">
         <h2>Enter your email</h2>
-        <input type="email" id="email" required placeholder="Email address" />
+        <input type="email" id="email" placeholder="Email address" />
         <button type="submit">Send OTP</button>
         <div class="error" id="email-error"></div>
         <a href="#" id="skip-email" class="skip-link">Skip step</a>
@@ -22,6 +22,7 @@
         <input type="text" id="email-otp" maxlength="6" pattern="\d{6}" required placeholder="123456" />
         <button type="submit">Verify</button>
         <div class="error" id="email-otp-error"></div>
+        <a href="#" id="resend-email-otp" class="resend-link disabled">Resend OTP in 30 seconds</a>
       </form>
     </div>
 
