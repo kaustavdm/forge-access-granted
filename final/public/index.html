@@ -2,105 +2,11 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Onboarding Flow</title>
-    <link rel="stylesheet" href="/style.css" />
+    <meta http-equiv="refresh" content="0;url=phone.html" />
+    <title>Redirecting...</title>
   </head>
-
   <body>
-    <div id="app">
-      <!-- Step 1: Phone input -->
-      <form id="phone-form" class="step">
-        <h2>Enter your phone number</h2>
-        <input type="tel" id="phone" required placeholder="+1234567890" />
-        <button type="submit">Send OTP</button>
-        <div class="error" id="phone-error"></div>
-        <a href="#" id="passkey-login" class="passkey-link">Sign in with Passkey</a>
-        <a href="#" id="skip-phone" class="skip-link">Skip step</a>
-      </form>
-
-      <!-- Step 2: Phone OTP -->
-      <form id="phone-otp-form" class="step" style="display: none">
-        <h2>Enter the 6-digit code sent to your phone</h2>
-        <input
-          type="text"
-          id="phone-otp"
-          maxlength="6"
-          pattern="\d{6}"
-          required
-          placeholder="123456"
-        />
-        <button type="submit">Verify</button>
-        <div class="error" id="phone-otp-error"></div>
-        <a href="#" id="resend-phone-otp" class="resend-link disabled">Resend OTP in 30 seconds</a>
-        <a href="#" id="call-phone-otp" class="call-link" style="display: none">Call for OTP</a>
-      </form>
-
-      <!-- Step 3: Intermediate Dashboard -->
-      <div id="phone-verified-dashboard" class="step" style="display: none">
-        <h2>Phone Verified!</h2>
-        <p>Your have successfully verified your phone.</p>
-        <button id="verify-email-btn">Verify your email</button>
-      </div>
-
-      <!-- Step 4: Email input -->
-      <form id="email-form" class="step" style="display: none">
-        <h2>Enter your email</h2>
-        <input type="email" id="email" required placeholder="Email address" />
-        <button type="submit">Send OTP</button>
-        <div class="error" id="email-error"></div>
-        <a href="#" id="skip-email" class="skip-link">Skip step</a>
-      </form>
-
-      <!-- Step 5: Email OTP -->
-      <form id="email-otp-form" class="step" style="display: none">
-        <h2>Enter the 6-digit code sent to your email</h2>
-        <input
-          type="text"
-          id="email-otp"
-          maxlength="6"
-          pattern="\d{6}"
-          required
-          placeholder="123456"
-        />
-        <button type="submit">Verify</button>
-        <div class="error" id="email-otp-error"></div>
-      </form>
-
-      <!-- Step 6: Register Passkey -->
-      <form id="passkey-register" class="step" style="display: none">
-        <h2>Set up a Passkey</h2>
-        <div id="passkey-register-new">
-          <p>Use biometrics for faster sign-in next time.</p>
-          <input type="text" id="passkey-friendly-name-input" placeholder="Passkey name (e.g. My MacBook)" />
-          <button type="submit">Register Passkey</button>
-        </div>
-        <div id="passkey-register-existing" style="display: none">
-          <p>You already have a passkey set up.</p>
-          <button type="button" id="passkey-signin-btn">Sign in with Passkey</button>
-          <a href="#" id="passkey-create-new" class="skip-link">Create new Passkey</a>
-        </div>
-        <div class="error" id="passkey-register-error"></div>
-        <a href="#" id="skip-passkey" class="skip-link">Skip for now</a>
-      </form>
-
-      <!-- Step 7: Final Dashboard -->
-      <div id="dashboard" class="step" style="display: none">
-        <h2>Congratulations!</h2>
-        <p id="dashboard-passkey-greeting" style="display: none">
-          Signed in as <strong id="passkey-friendly-name"></strong>
-        </p>
-        <ul id="verification-checklist">
-          <li id="checklist-phone"><span class="checklist-icon"></span> Phone</li>
-          <li id="checklist-email"><span class="checklist-icon"></span> Email</li>
-          <li id="checklist-passkey"><span class="checklist-icon"></span> Passkey</li>
-        </ul>
-        <p>You have completed onboarding!</p>
-        <button id="setup-passkey-btn" style="display: none">Set up a Passkey</button>
-        <a href="#" id="logout-link" class="skip-link">Logout</a>
-      </div>
-    </div>
-
-    <script src="/main.js"></script>
+    <p>Redirecting to <a href="phone.html">phone.html</a>...</p>
+    <script>window.location.href = "phone.html";</script>
   </body>
 </html>
