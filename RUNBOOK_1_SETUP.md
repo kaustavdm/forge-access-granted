@@ -68,39 +68,36 @@ To enable email verification:
 > [!NOTE]
 > This step is optional. You can come back to it when you reach [Section 5: Implement Passkeys](./RUNBOOK_5_PASSKEYS.md).
 
-Configure your Verify service with Relying Party settings for passkeys:
+> [!IMPORTANT]
+> Passkeys configuration is **not available through the Twilio Console**. You must use the Twilio REST API to enable passkeys on your Verify service. Use the curl command or Postman request below.
 
-1. Go to **Twilio Console → Verify → Services**
-2. Select your Verify service
-3. Navigate to the **Passkeys** configuration section
-4. Configure the following:
+Configure your Verify service with [Relying Party settings for passkeys](https://www.twilio.com/docs/verify/quickstarts/passkeys#create-passkey-enabled-verify-service):
 
-| Setting | Value | Description |
-|---------|-------|-------------|
-| **Relying Party ID** | `localhost` | Domain where passkeys will be used |
-| **Relying Party Name** | `Forge Access Granted` | Shown during passkey prompts |
-| **Allowed Origins** | `http://localhost:3000` | Origin URL(s) allowed for passkeys |
-| **Authenticator Attachment** | `platform` | Use device biometrics (Touch ID, Face ID, Windows Hello) |
-| **User Verification** | `preferred` | Request biometric/PIN verification when available |
-| **Discoverable Credentials** | `preferred` | Enable username-free login when supported |
+| Property | Value | Description |
+|----------|-------|-------------|
+| `Passkeys.RelyingParty.Id` | `localhost` | Domain where passkeys will be used |
+| `Passkeys.RelyingParty.Name` | `Forge Access Granted` | Shown during passkey prompts |
+| `Passkeys.RelyingParty.Origins` | `http://localhost:3000` | Origin URL(s) allowed for passkeys |
+| `Passkeys.AuthenticatorAttachment` | `platform` | Use device biometrics (Touch ID, Face ID, Windows Hello) |
+| `Passkeys.UserVerification` | `preferred` | Request biometric/PIN verification when available |
+| `Passkeys.DiscoverableCredentials` | `preferred` | Enable username-free login when supported |
 
-5. Save your changes
+Run this curl command to configure passkeys on your Verify service:
+
+```bash
+curl -X POST "https://verify.twilio.com/v2/Services/$TWILIO_VERIFY_SERVICE_SID" \
+  -u "$TWILIO_API_KEY_SID:$TWILIO_API_KEY_SECRET" \
+  --data-urlencode "FriendlyName=Forge Access Granted" \
+  --data-urlencode "Passkeys.RelyingParty.Id=localhost" \
+  --data-urlencode "Passkeys.RelyingParty.Name=Forge Access Granted" \
+  --data-urlencode "Passkeys.RelyingParty.Origins=http://localhost:3000" \
+  --data-urlencode "Passkeys.AuthenticatorAttachment=platform" \
+  --data-urlencode "Passkeys.DiscoverableCredentials=preferred" \
+  --data-urlencode "Passkeys.UserVerification=preferred"
+```
 
 > [!TIP]
-> You can also configure passkeys via the API using Postman. The included Postman collection has an **"Update a Passkey-enabled Verify Service"** request in the **Setup** folder.
->
-> Or use curl:
-> ```bash
-> curl -X POST "https://verify.twilio.com/v2/Services/$TWILIO_VERIFY_SERVICE_SID" \
->   -u "$TWILIO_API_KEY_SID:$TWILIO_API_KEY_SECRET" \
->   --data-urlencode "FriendlyName=Forge Access Granted" \
->   --data-urlencode "Passkeys.RelyingParty.Id=localhost" \
->   --data-urlencode "Passkeys.RelyingParty.Name=Forge Access Granted" \
->   --data-urlencode "Passkeys.RelyingParty.Origins=http://localhost:3000" \
->   --data-urlencode "Passkeys.AuthenticatorAttachment=platform" \
->   --data-urlencode "Passkeys.DiscoverableCredentials=preferred" \
->   --data-urlencode "Passkeys.UserVerification=preferred"
-> ```
+> Alternatively, use the included Postman collection: open the **"Setup"** folder and run the **"Update a Passkey-enabled Verify Service"** request. Make sure the Postman environment variables (`TWILIO_API_KEY_SID`, `TWILIO_API_KEY_SECRET`, `VERIFY_SERVICE_SID`) are set first.
 
 > [!IMPORTANT]
 > The Relying Party ID (`localhost`) and Allowed Origins (`http://localhost:3000`) must match your development environment. In production, use your actual domain and origin.
