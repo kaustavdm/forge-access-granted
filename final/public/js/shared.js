@@ -8,6 +8,7 @@
     emailSkipped:        "forge_email_skipped",
     passkeyRegistered:   "forge_passkey_registered",
     passkeyFailed:       "forge_passkey_failed",
+    passkeySkipped:      "forge_passkey_skipped",
     passkeyAuthUsed:     "forge_passkey_auth_used",
     passkeyFriendlyName: "forge_passkey_friendly_name",
   };
@@ -21,6 +22,7 @@
     emailSkipped:       false,
     passkeyRegistered:  false,
     passkeyFailed:      false,
+    passkeySkipped:     false,
     passkeyAuthUsed:    false,
     passkeyFriendlyName: null,
   };
