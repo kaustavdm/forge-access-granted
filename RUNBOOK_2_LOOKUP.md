@@ -8,7 +8,6 @@ In this section, you'll implement the Twilio Lookup v2 API to validate phone num
 
 The scaffolded file already provides:
 - `twilioFetch` — an authenticated fetch wrapper (injected via `initialize()`)
-- `buildUrl(phone, params)` — constructs the Lookup API URL with query parameters
 - `pickBaseFields(data)` — extracts common fields from Lookup responses
 - Route declarations with try/catch and error handling
 
@@ -31,7 +30,12 @@ Optional query param: CountryCode={code}
 **Implementation:**
 
 ```javascript
-const response = await twilioFetch(buildUrl(phone, params));
+const url = new URL(`https://lookups.twilio.com/v2/PhoneNumbers/${encodeURIComponent(phone)}`);
+if (req.query.countryCode) {
+  url.searchParams.set("CountryCode", req.query.countryCode);
+}
+
+const response = await twilioFetch(url.toString());
 if (!response.ok) {
   const err = await response.json();
   return errorRes(res, response.status, err.message || "Lookup failed", err.code || "LOOKUP_ERROR");
@@ -71,9 +75,9 @@ Locate the `GET /:phone/line-type` route.
 **Implementation:**
 
 ```javascript
-const response = await twilioFetch(
-  buildUrl(phone, { Fields: "line_type_intelligence" })
-);
+const url = `https://lookups.twilio.com/v2/PhoneNumbers/${encodeURIComponent(phone)}?Fields=line_type_intelligence`;
+
+const response = await twilioFetch(url);
 if (!response.ok) {
   const err = await response.json();
   return errorRes(res, response.status, err.message || "Lookup failed", err.code || "LOOKUP_ERROR");
@@ -119,9 +123,9 @@ Locate the `GET /:phone/sms-pumping` route.
 **Implementation:**
 
 ```javascript
-const response = await twilioFetch(
-  buildUrl(phone, { Fields: "sms_pumping_risk" })
-);
+const url = `https://lookups.twilio.com/v2/PhoneNumbers/${encodeURIComponent(phone)}?Fields=sms_pumping_risk`;
+
+const response = await twilioFetch(url);
 if (!response.ok) {
   const err = await response.json();
   return errorRes(res, response.status, err.message || "Lookup failed", err.code || "LOOKUP_ERROR");
@@ -154,11 +158,9 @@ You can request multiple Lookup data packages by passing a comma-separated list 
 **Implementation:**
 
 ```javascript
-const response = await twilioFetch(
-  buildUrl(phone, {
-    Fields: "line_type_intelligence,sms_pumping_risk,caller_name",
-  })
-);
+const url = `https://lookups.twilio.com/v2/PhoneNumbers/${encodeURIComponent(phone)}?Fields=line_type_intelligence,sms_pumping_risk,caller_name`;
+
+const response = await twilioFetch(url);
 if (!response.ok) {
   const err = await response.json();
   return errorRes(res, response.status, err.message || "Lookup failed", err.code || "LOOKUP_ERROR");

@@ -7,33 +7,13 @@ const { errorRes } = require("../lib/errors");
 const passkeysRouter = express.Router();
 
 let twilioFetch;
-let passkeysBaseUrl;
+let verifyServiceSid;
 
 const factorStore = new Map();
 
 function initialize(fetch, serviceSid) {
   twilioFetch = fetch;
-  passkeysBaseUrl = `https://verify.twilio.com/v2/Services/${serviceSid}/Passkeys`;
-}
-
-async function postPasskeys(path, body) {
-  const response = await twilioFetch(passkeysBaseUrl + path, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Accept: "application/json",
-    },
-    body: JSON.stringify(body),
-  });
-
-  const data = await response.json();
-  if (!response.ok) {
-    const err = new Error(data.message || "Twilio error");
-    err.status = response.status;
-    err.code = data.code;
-    throw err;
-  }
-  return data;
+  verifyServiceSid = serviceSid;
 }
 
 passkeysRouter.post("/register", async (req, res) => {
@@ -41,10 +21,20 @@ passkeysRouter.post("/register", async (req, res) => {
     const { friendly_name } = req.body;
     const identity = "UA-" + crypto.randomUUID();
 
-    const data = await postPasskeys("/Factors", {
-      friendly_name: friendly_name || "Passkey",
-      identity,
+    const url = `https://verify.twilio.com/v2/Services/${verifyServiceSid}/Passkeys/Factors`;
+    const response = await twilioFetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Accept: "application/json" },
+      body: JSON.stringify({ friendly_name: friendly_name || "Passkey", identity }),
     });
+
+    const data = await response.json();
+    if (!response.ok) {
+      const err = new Error(data.message || "Twilio error");
+      err.status = response.status;
+      err.code = data.code;
+      throw err;
+    }
 
     console.log("/Factors", JSON.stringify(data, null, 2));
     res.json({ identity, options: data.options });
@@ -62,17 +52,30 @@ passkeysRouter.post("/register/verify", async (req, res) => {
       return res.status(400).json({ error: "Credential response required" });
     }
 
-    const data = await postPasskeys("/VerifyFactor", {
-      id,
-      rawId,
-      authenticatorAttachment,
-      type,
-      response: {
-        attestationObject: credResponse.attestationObject,
-        clientDataJSON: credResponse.clientDataJSON,
-        transports: credResponse.transports,
-      },
+    const url = `https://verify.twilio.com/v2/Services/${verifyServiceSid}/Passkeys/VerifyFactor`;
+    const response = await twilioFetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Accept: "application/json" },
+      body: JSON.stringify({
+        id,
+        rawId,
+        authenticatorAttachment,
+        type,
+        response: {
+          attestationObject: credResponse.attestationObject,
+          clientDataJSON: credResponse.clientDataJSON,
+          transports: credResponse.transports,
+        },
+      }),
     });
+
+    const data = await response.json();
+    if (!response.ok) {
+      const err = new Error(data.message || "Twilio error");
+      err.status = response.status;
+      err.code = data.code;
+      throw err;
+    }
 
     console.log("/VerifyFactor", JSON.stringify(data, null, 2));
 
@@ -95,7 +98,21 @@ passkeysRouter.post("/register/verify", async (req, res) => {
 
 passkeysRouter.post("/authenticate", async (req, res) => {
   try {
-    const data = await postPasskeys("/Challenges", {});
+    const url = `https://verify.twilio.com/v2/Services/${verifyServiceSid}/Passkeys/Challenges`;
+    const response = await twilioFetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Accept: "application/json" },
+      body: JSON.stringify({}),
+    });
+
+    const data = await response.json();
+    if (!response.ok) {
+      const err = new Error(data.message || "Twilio error");
+      err.status = response.status;
+      err.code = data.code;
+      throw err;
+    }
+
     res.json({ options: data.options });
   } catch (error) {
     console.error(`Passkey challenge error ${error.code}: ${error.message}`);
@@ -111,18 +128,31 @@ passkeysRouter.post("/authenticate/verify", async (req, res) => {
       return res.status(400).json({ error: "Assertion response required" });
     }
 
-    const data = await postPasskeys("/ApproveChallenge", {
-      id,
-      rawId,
-      authenticatorAttachment,
-      type,
-      response: {
-        authenticatorData: assertionResponse.authenticatorData,
-        clientDataJSON: assertionResponse.clientDataJSON,
-        signature: assertionResponse.signature,
-        userHandle: assertionResponse.userHandle,
-      },
+    const url = `https://verify.twilio.com/v2/Services/${verifyServiceSid}/Passkeys/ApproveChallenge`;
+    const response = await twilioFetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Accept: "application/json" },
+      body: JSON.stringify({
+        id,
+        rawId,
+        authenticatorAttachment,
+        type,
+        response: {
+          authenticatorData: assertionResponse.authenticatorData,
+          clientDataJSON: assertionResponse.clientDataJSON,
+          signature: assertionResponse.signature,
+          userHandle: assertionResponse.userHandle,
+        },
+      }),
     });
+
+    const data = await response.json();
+    if (!response.ok) {
+      const err = new Error(data.message || "Twilio error");
+      err.status = response.status;
+      err.code = data.code;
+      throw err;
+    }
 
     const factorInfo = factorStore.get(data.factor_sid) || {};
 

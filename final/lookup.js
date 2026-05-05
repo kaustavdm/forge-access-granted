@@ -4,20 +4,11 @@ const express = require("express");
 const { errorRes } = require("./lib/errors");
 
 const router = express.Router();
-const LOOKUP_BASE = "https://lookups.twilio.com/v2/PhoneNumbers";
 
 let twilioFetch;
 
 function initialize(fetchFn) {
   twilioFetch = fetchFn;
-}
-
-function buildUrl(phone, params) {
-  const url = new URL(`${LOOKUP_BASE}/${encodeURIComponent(phone)}`);
-  for (const [key, value] of Object.entries(params)) {
-    url.searchParams.set(key, value);
-  }
-  return url.toString();
 }
 
 function pickBaseFields(data) {
@@ -34,11 +25,12 @@ function pickBaseFields(data) {
 router.get("/:phone", async (req, res) => {
   try {
     const { phone } = req.params;
-    const params = {};
+    const url = new URL(`https://lookups.twilio.com/v2/PhoneNumbers/${encodeURIComponent(phone)}`);
     if (req.query.countryCode) {
-      params.CountryCode = req.query.countryCode;
+      url.searchParams.set("CountryCode", req.query.countryCode);
     }
-    const response = await twilioFetch(buildUrl(phone, params));
+
+    const response = await twilioFetch(url.toString());
     if (!response.ok) {
       const err = await response.json();
       return errorRes(res, response.status, err.message || "Lookup failed", err.code || "LOOKUP_ERROR");
@@ -53,9 +45,9 @@ router.get("/:phone", async (req, res) => {
 router.get("/:phone/line-type", async (req, res) => {
   try {
     const { phone } = req.params;
-    const response = await twilioFetch(
-      buildUrl(phone, { Fields: "line_type_intelligence" })
-    );
+    const url = `https://lookups.twilio.com/v2/PhoneNumbers/${encodeURIComponent(phone)}?Fields=line_type_intelligence`;
+
+    const response = await twilioFetch(url);
     if (!response.ok) {
       const err = await response.json();
       return errorRes(res, response.status, err.message || "Lookup failed", err.code || "LOOKUP_ERROR");
@@ -75,9 +67,9 @@ router.get("/:phone/line-type", async (req, res) => {
 router.get("/:phone/sms-pumping", async (req, res) => {
   try {
     const { phone } = req.params;
-    const response = await twilioFetch(
-      buildUrl(phone, { Fields: "sms_pumping_risk" })
-    );
+    const url = `https://lookups.twilio.com/v2/PhoneNumbers/${encodeURIComponent(phone)}?Fields=sms_pumping_risk`;
+
+    const response = await twilioFetch(url);
     if (!response.ok) {
       const err = await response.json();
       return errorRes(res, response.status, err.message || "Lookup failed", err.code || "LOOKUP_ERROR");
@@ -95,11 +87,9 @@ router.get("/:phone/sms-pumping", async (req, res) => {
 router.get("/:phone/multiple", async (req, res) => {
   try {
     const { phone } = req.params;
-    const response = await twilioFetch(
-      buildUrl(phone, {
-        Fields: "line_type_intelligence,sms_pumping_risk,caller_name",
-      })
-    );
+    const url = `https://lookups.twilio.com/v2/PhoneNumbers/${encodeURIComponent(phone)}?Fields=line_type_intelligence,sms_pumping_risk,caller_name`;
+
+    const response = await twilioFetch(url);
     if (!response.ok) {
       const err = await response.json();
       return errorRes(res, response.status, err.message || "Lookup failed", err.code || "LOOKUP_ERROR");

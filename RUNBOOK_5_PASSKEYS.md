@@ -12,7 +12,7 @@ In this section, you'll implement passkey registration and authentication using 
 Passkeys are based on the FIDO/WebAuthn standard. They replace passwords with cryptographic key pairs, using biometrics (Touch ID, Face ID, Windows Hello) for verification. Passkeys are phishing-resistant because they are bound to specific domains.
 
 The scaffolded file already provides:
-- `postPasskeys(path, body)` — a helper that calls Twilio Verify Passkeys endpoints with JSON content type
+- `twilioFetch` and `verifyServiceSid` — injected via `initialize()`
 - `factorStore` — an in-memory Map to store factor metadata after registration
 - Input validation and error handling for all routes
 
@@ -35,10 +35,20 @@ Body (JSON): { "friendly_name": "...", "identity": "..." }
 **Implementation:**
 
 ```javascript
-const data = await postPasskeys("/Factors", {
-  friendly_name: friendly_name || "Passkey",
-  identity,
+const url = `https://verify.twilio.com/v2/Services/${verifyServiceSid}/Passkeys/Factors`;
+const response = await twilioFetch(url, {
+  method: "POST",
+  headers: { "Content-Type": "application/json", Accept: "application/json" },
+  body: JSON.stringify({ friendly_name: friendly_name || "Passkey", identity }),
 });
+
+const data = await response.json();
+if (!response.ok) {
+  const err = new Error(data.message || "Twilio error");
+  err.status = response.status;
+  err.code = data.code;
+  throw err;
+}
 
 console.log("/Factors", JSON.stringify(data, null, 2));
 res.json({ identity, options: data.options });
@@ -69,17 +79,30 @@ Body (JSON): { id, rawId, authenticatorAttachment, type, response: { attestation
 **Implementation:**
 
 ```javascript
-const data = await postPasskeys("/VerifyFactor", {
-  id,
-  rawId,
-  authenticatorAttachment,
-  type,
-  response: {
-    attestationObject: credResponse.attestationObject,
-    clientDataJSON: credResponse.clientDataJSON,
-    transports: credResponse.transports,
-  },
+const url = `https://verify.twilio.com/v2/Services/${verifyServiceSid}/Passkeys/VerifyFactor`;
+const response = await twilioFetch(url, {
+  method: "POST",
+  headers: { "Content-Type": "application/json", Accept: "application/json" },
+  body: JSON.stringify({
+    id,
+    rawId,
+    authenticatorAttachment,
+    type,
+    response: {
+      attestationObject: credResponse.attestationObject,
+      clientDataJSON: credResponse.clientDataJSON,
+      transports: credResponse.transports,
+    },
+  }),
 });
+
+const data = await response.json();
+if (!response.ok) {
+  const err = new Error(data.message || "Twilio error");
+  err.status = response.status;
+  err.code = data.code;
+  throw err;
+}
 
 console.log("/VerifyFactor", JSON.stringify(data, null, 2));
 
@@ -144,7 +167,21 @@ Body (JSON): {}
 **Implementation:**
 
 ```javascript
-const data = await postPasskeys("/Challenges", {});
+const url = `https://verify.twilio.com/v2/Services/${verifyServiceSid}/Passkeys/Challenges`;
+const response = await twilioFetch(url, {
+  method: "POST",
+  headers: { "Content-Type": "application/json", Accept: "application/json" },
+  body: JSON.stringify({}),
+});
+
+const data = await response.json();
+if (!response.ok) {
+  const err = new Error(data.message || "Twilio error");
+  err.status = response.status;
+  err.code = data.code;
+  throw err;
+}
+
 res.json({ options: data.options });
 ```
 
@@ -171,18 +208,31 @@ Body (JSON): { id, rawId, authenticatorAttachment, type, response: { authenticat
 **Implementation:**
 
 ```javascript
-const data = await postPasskeys("/ApproveChallenge", {
-  id,
-  rawId,
-  authenticatorAttachment,
-  type,
-  response: {
-    authenticatorData: assertionResponse.authenticatorData,
-    clientDataJSON: assertionResponse.clientDataJSON,
-    signature: assertionResponse.signature,
-    userHandle: assertionResponse.userHandle,
-  },
+const url = `https://verify.twilio.com/v2/Services/${verifyServiceSid}/Passkeys/ApproveChallenge`;
+const response = await twilioFetch(url, {
+  method: "POST",
+  headers: { "Content-Type": "application/json", Accept: "application/json" },
+  body: JSON.stringify({
+    id,
+    rawId,
+    authenticatorAttachment,
+    type,
+    response: {
+      authenticatorData: assertionResponse.authenticatorData,
+      clientDataJSON: assertionResponse.clientDataJSON,
+      signature: assertionResponse.signature,
+      userHandle: assertionResponse.userHandle,
+    },
+  }),
 });
+
+const data = await response.json();
+if (!response.ok) {
+  const err = new Error(data.message || "Twilio error");
+  err.status = response.status;
+  err.code = data.code;
+  throw err;
+}
 
 const factorInfo = factorStore.get(data.factor_sid) || {};
 
